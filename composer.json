@@ -1,12 +1,12 @@
 {
-    "name": "k1sul1/k1-apikit",
-    "type": "wordpress-plugin",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "k1sul1",
-            "email": "me@kisu.li"
-        }
-    ],
-    "require": {}
+  "name": "k1sul1/k1kit",
+  "type": "wordpress-plugin",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "k1sul1",
+      "email": "me@kisu.li"
+    }
+  ],
+  "require": {}
 }

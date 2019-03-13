@@ -1,0 +1,78 @@
+.toplevel_page_k1kit {
+  #wpcontent {
+    padding-left: 0;
+  }
+
+  .update-nag, .notice-nag {
+    display: none;
+  }
+}
+
+#k1kit-gui {
+  .App {
+    > div {
+      padding: 0 1rem;
+    }
+  }
+
+  header {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+    background: #23282d;
+    color: #eee;
+
+    a {
+      display: inline-flex;
+      align-content: center;
+      justify-content: center;
+      padding: 0.5rem 1.5rem;
+      transition: 0.3s ease;
+      color: inherit;
+      text-decoration: none;
+
+      &.active, &:hover, &:focus {
+        background: #0073aa;
+      }
+    }
+  }
+
+  .List {
+    width: 100%;
+  }
+
+  .ListItem {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .circle-progress {
+    position: relative;
+    max-width: 400px;
+
+    .progress {
+
+    }
+
+    .text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translateX(-50%) translateY(-50%);
+      text-align: center;
+
+      .percentage {
+        font-size: 2rem;
+        display: block;
+        margin-bottom: 0.5rem;
+      }
+
+      .numeric {
+        font-size: 0.8rem;
+        display: block;
+      }
+    }
+  }
+}
