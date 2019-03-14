@@ -45,12 +45,14 @@ class Transientify {
         $data = get_userdata($user->ID);
         $primaryRole = $data->roles[0];
 
-        $this->key = $this->key . "_$primaryRole";
+        $this->key = $this->key . "$primaryRole_";
       } else {
         // No user, use 0 as role
-        $this->key = $this->key . "_0";
+        $this->key = $this->key . "0_";
       }
     }
+
+    $this->key = $this->key . $key;
 
     $bypassParamPresentAndCorrect = ($_GET['bypass'] ?? false) === $transientOptions['bypassKey'];
     $bypassPermissionPresent = (bool) count(array_filter($transientOptions['bypassPermissions'], 'current_user_can'));
@@ -82,10 +84,14 @@ class Transientify {
       $transient = get_transient($this->key);
 
       if ($transient) {
+        if ($this->compress) {
+          $transient = gzuncompress($transient);
+        }
+
         $transient = unserialize($transient);
 
-        if ($this->compress) {
-          $transient = gzdeflate($transient);
+        if (!$transient) {
+          error_log("Transient {$this->key} is corrupted");
         }
       } else {
         $transient = false;
