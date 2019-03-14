@@ -86,7 +86,7 @@ class Resolver {
 
       $this->db->query(
         $this->db->prepare("
-            INSERT INTO {$prefix}k1_resolver
+            INSERT INTO `{$prefix}k1_resolver`
             (object_id, permalink, permalink_sha)
             VALUES(%d, %s, SHA1(%s))
             ON DUPLICATE KEY
@@ -111,8 +111,8 @@ class Resolver {
     }
 
     $prefix = $this->prefix;
-    $this->db->query("CREATE TABLE IF NOT EXISTS {$prefix}k1_resolver_temp LIKE {$prefix}k1_resolver");
-    $this->db->query("TRUNCATE TABLE {$prefix}k1_resolver_temp");
+    $this->db->query("CREATE TABLE IF NOT EXISTS `{$prefix}k1_resolver_temp` LIKE `{$prefix}k1_resolver`");
+    $this->db->query("TRUNCATE TABLE `{$prefix}k1_resolver_temp`");
 
     $types = $this->getIndexablePostTypes();
     foreach ($types as $k => $v) {
@@ -121,7 +121,7 @@ class Resolver {
     $types = join(', ', $types);
 
     $all = $this->db->get_results("
-      SELECT ID FROM {$prefix}posts 
+      SELECT ID FROM `{$prefix}posts`
       WHERE post_status NOT IN ('trash', 'auto-draft') 
       AND post_type IN ($types) ORDER BY ID
     ");
@@ -188,8 +188,8 @@ class Resolver {
     }
 
     $prefix = $this->prefix;
-    $this->db->query("RENAME TABLE {$prefix}k1_resolver TO {$prefix}k1_resolver_old, {$prefix}k1_resolver_temp TO {$prefix}k1_resolver");
-    $this->db->query("DROP TABLE {$prefix}k1_resolver_old");
+    $this->db->query("RENAME TABLE `{$prefix}k1_resolver` TO `{$prefix}k1_resolver_old`, `{$prefix}k1_resolver_temp` TO `{$prefix}k1_resolver`");
+    $this->db->query("DROP TABLE `{$prefix}k1_resolver_old`");
 
     update_option("k1_resolver_index_status", [
       "indexing" => false,
@@ -208,7 +208,7 @@ class Resolver {
     $prefix = $this->prefix;
     $this->db->query(
       $this->db->prepare(
-        "DELETE FROM {$prefix}k1_resolver WHERE object_id = %d",
+        "DELETE FROM `{$prefix}k1_resolver` WHERE object_id = %d",
         $pID
       )
     );

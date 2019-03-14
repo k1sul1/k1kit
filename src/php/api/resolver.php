@@ -61,7 +61,7 @@ class Resolver extends \k1\RestRoute {
     $slashed = strpos($url, "?") === false ? trailingslashit($url) : $url;
 
     $id = $this->resolver->db->get_var($this->resolver->db->prepare(
-      "SELECT object_id FROM {$prefix}k1_resolver WHERE permalink_sha = SHA1(%s) OR permalink_sha = SHA1(%s) LIMIT 1",
+      "SELECT object_id FROM `{$prefix}k1_resolver` WHERE permalink_sha = SHA1(%s) OR permalink_sha = SHA1(%s) LIMIT 1",
       $url,
       $slashed
     ));
@@ -103,12 +103,12 @@ class Resolver extends \k1\RestRoute {
     $types = join(', ', $types);
 
     $total = $this->resolver->db->get_var("
-      SELECT COUNT(*) FROM {$prefix}posts 
+      SELECT COUNT(*) FROM `{$prefix}posts` 
       WHERE post_status NOT IN ('trash', 'auto-draft') 
       AND post_type IN ($types) ORDER BY ID
     ");
     if ($status['indexing']) {
-      $indexed = $this->resolver->db->get_var("SELECT COUNT(*) FROM {$prefix}k1_resolver_temp");
+      $indexed = $this->resolver->db->get_var("SELECT COUNT(*) FROM `{$prefix}k1_resolver_temp`");
 
       return [
         "indexing" => true,
@@ -117,7 +117,7 @@ class Resolver extends \k1\RestRoute {
         "percentage" => $indexed / $total * 100,
       ];
     } else {
-      $indexed = $this->resolver->db->get_var("SELECT COUNT(*) FROM {$prefix}k1_resolver");
+      $indexed = $this->resolver->db->get_var("SELECT COUNT(*) FROM `{$prefix}k1_resolver`");
 
       return [
         "indexing" => false,
