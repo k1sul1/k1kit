@@ -19,3 +19,15 @@ Very work in progress, except for the name. That's perfect.
   - For storing "3rd" party or native API requests
 
 Features marked with * are WIP, or might not exist at all.
+
+## Word of warning
+Overhauling the transients kinda requires overhauling the software behind them. You _can_ use WP DB as the transient store, but you shouldn't. 
+
+If theres's no object-cache.php present, data compression will be turned off, and there won't be a TransientList. 
+
+This is tested with Redis, with the most popular plugins: [WP Redis](https://wordpress.org/plugins/wp-redis/) and [Redis Object Cache](https://wordpress.org/plugins/redis-cache/). 
+
+As long as WP is using an actual key-value store for set_transient & get_transient, this plugin should work just fine.
+
+### Memcached
+Memcached will work for small sites, but it has a hardcoded maximum value size of 1MB, which makes it impossible to store the TransientList in memcached if it gets bigger than that. After that it will fail.

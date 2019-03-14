@@ -44,6 +44,9 @@ abstract class RestRoute extends \WP_REST_Controller {
   public function registerEndpoint(string $path, array $params = [], array $transientify = []) {
     if (empty($params)) {
       throw new \Exception('Parameter error: no parameters provided');
+    } else if ($path[0] !== '/') {
+      // Force / for predictable transient name
+      throw new \Exception('Endpoint path should always start with /');
     } else if (isset($params['get_callback'])) {
       throw new \Exception('Parameter error: get_callback is unsupported, use callback instead');
     }
@@ -65,10 +68,13 @@ abstract class RestRoute extends \WP_REST_Controller {
        */
       $params['callback'] = function($request) use (&$cb, $route, $ns, $path, $transientify) {
         $reqParams = $request->get_params();
+        $transientify = array_merge([
+          'type' => 'REST API',
+        ], $transientify);
 
 
         // Note: $path is empty in "top-level" endpoints
-        $key = "{$ns}_{$route}_{$path}_" . md5(json_encode($reqParams));
+        $key = "{$ns}/{$route}{$path}/[params=" . md5(json_encode($reqParams)) . "]";
 
         if (strlen($key) > 172) { // set_transient maximum key length
           \trigger_error("Transient key $key exceeds the maximum length of set_transient, and will be truncated", E_USER_WARNING);

@@ -44,3 +44,5 @@ export default async function http(url, opts = {}) {
     return e // Handle in component
   }
 }
+
+window.http = http

@@ -7,6 +7,7 @@ if (!defined("ABSPATH")) {
 }
 
 require 'classes/class.transientify.php';
+require 'classes/class.transient-list.php';
 require 'classes/class.resolver.php';
 require 'classes/class.rest-route.php';
 
@@ -31,7 +32,7 @@ add_action('admin_enqueue_scripts', function() {
 
   wp_enqueue_style('k1kit-css', $assets->{'main.css'});
   wp_enqueue_script('k1kit-mainjs', $assets->{'main.js'}, [], false, true);
-  wp_localize_script('k1kit-mainjs', 'k1_k1kit', [
+  wp_localize_script('k1kit-mainjs', 'k1kit', [
     'nonce' => wp_create_nonce('wp_rest'),
   ]);
 });
@@ -45,6 +46,8 @@ add_action('plugins_loaded', function() {
 
 add_action('rest_api_init', function() use (&$resolver) {
   require 'api/resolver.php';
+  require 'api/transient-list.php';
 
   (new Routes\Resolver($resolver))->registerRoutes();
+  (new Routes\TransientList())->registerRoutes();
 });

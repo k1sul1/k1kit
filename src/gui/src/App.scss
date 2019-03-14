@@ -9,6 +9,18 @@
 }
 
 #k1kit-gui {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  box-sizing: border-box;
+
+  *, *:before, *:after {
+    box-sizing: inherit;
+  }
+
   .App {
     > div {
       padding: 0 1rem;
@@ -37,8 +49,18 @@
     }
   }
 
+  .list-container {
+    max-width: 90%;
+    min-height: 70vh;
+    margin-bottom: 40px;
+  }
+
   .List {
     width: 100%;
+
+    > div {
+      overflow-y: scroll;
+    }
   }
 
   .ListItem {
@@ -46,6 +68,94 @@
     flex-flow: row nowrap;
     justify-content: space-between;
     align-items: center;
+    transition: 0.3s;
+
+    &.even {
+      background: #f1f1f1;
+    }
+
+    &.odd {
+      background: #fff;
+    }
+
+    &.selected {
+      background: #222;
+      color: #fff;
+    }
+  }
+
+  .transients {
+    padding: 0 !important;
+
+    .info {
+      height: 200px;
+      padding: 0 1rem;
+    }
+  }
+
+  .tl-row {
+    // display: flex;
+    // justify-content: flex-start;
+    // align-items: center;
+    width: 100%;
+
+    &.header {
+      transform: translateY(4px);
+      overflow-y: scroll;
+    }
+
+    > * {
+      // display: inline-block;
+      float: left;
+      min-height: 45px;
+      padding: 0.3rem 0.8rem;
+      margin: 0;
+      border-right: 1px solid #000;
+      border-bottom: 1px solid #000;
+      flex-grow: 0;
+      flex-shrink: 0;
+
+      &:nth-child(1) {
+        border-left: 1px solid #000;
+        width: 80px;
+      }
+
+      &:nth-child(2) {
+        width: 120px;
+      }
+
+      &:nth-child(3) {
+        width: 120px;
+      }
+
+      &:nth-child(4) {
+        width: calc(100% - 80px - 120px - 120px - 40px); //auto;
+      }
+
+      &:nth-child(5) {
+        width: 40px;
+        text-align: center;
+        padding: 0;
+
+      // button {
+        padding: 0;
+        margin: 0;
+        // width: 100%;
+        // height: 100%;
+        border: none;
+        border-right: 1px solid #000;
+        border-bottom: 1px solid #000;
+        outline: 0;
+        background: transparent;
+        color: red;
+        transition: 0.3s ease;
+
+        &:hover, &:focus {
+          background: #ccc;
+        }
+        // } 
+      }
+    }
   }
 
   .circle-progress {

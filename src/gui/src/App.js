@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import { HashRouter as Router, Route } from "react-router-dom"
 
 import { Main, Transients, Resolver } from './containers'
@@ -28,11 +28,11 @@ class App extends Component {
           <Navigation />
 
           {error === null ? (
-            <div>
+            <Fragment>
               <Route exact path="/" component={Main} />
               <Route path="/transients" component={Transients} />
               <Route path="/resolver" component={Resolver} />
-            </div>
+            </Fragment>
           ) : (
             <div>
               <p>Blasted! Something broke.</p>
