@@ -3,6 +3,7 @@ import { isError } from 'lodash'
 import { Circle } from 'rc-progress'
 
 import http from '../lib/http'
+import { isProduction } from '../lib/env'
 
 export default class Resolver extends Component {
   state = {
@@ -35,7 +36,10 @@ export default class Resolver extends Component {
   }
 
   async componentDidMount() {
-    this.interval = setInterval(() => this.getIndexStatus(), 1000);
+    if (isProduction()) {
+      this.interval = setInterval(() => this.getIndexStatus(), 1000);
+    }
+
     this.getIndexStatus()
   }
 

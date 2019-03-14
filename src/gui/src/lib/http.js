@@ -1,10 +1,11 @@
+import { isProduction } from './env'
+
 let nonce = sessionStorage.getItem('nonce')
 
 async function getNonce() {
 
-  if(window.k1_k1kit) {
-    // Looks like WordPress. Don't store the nonce, always use the latest
-    return window.k1_k1kit.nonce
+  if(isProduction()) {
+    return window.k1kit.nonce
   } else if (!nonce) {
     const response = await prompt('This totally isn\'t a phishing attempt, can you paste me the nonce from WP?')
     nonce = response
