@@ -52,23 +52,11 @@ class Resolver extends \k1\RestRoute {
 
   public function resolveURL($request) {
     $params = $request->get_params();
-    $prefix = $this->resolver->prefix;
+    $post = $this->resolver->resolve($params["url"] ?? '');
 
-    $url = sanitize_text_field($params["url"] ?? '');
-    $url = str_replace([
-      "&preview=true",
-    ], "", $url);
-    $slashed = strpos($url, "?") === false ? trailingslashit($url) : $url;
-
-    $id = $this->resolver->db->get_var($this->resolver->db->prepare(
-      "SELECT object_id FROM `{$prefix}k1_resolver` WHERE permalink_sha = SHA1(%s) OR permalink_sha = SHA1(%s) LIMIT 1",
-      $url,
-      $slashed
-    ));
-
-    if ($id !== null) {
-      $post = get_post($id);
+    if ($post) {
       $type = $post->post_type;
+      $id = $post->ID;
       $ptypeObject = get_post_type_object($type);
       $endpoint = !empty($ptypeObject->rest_base) ? $ptypeObject->rest_base : $type;
 
@@ -93,39 +81,9 @@ class Resolver extends \k1\RestRoute {
   }
 
   public function getIndexStatus($request) {
-    $prefix = $this->resolver->prefix;
-    $status = $this->resolver->getIndexingStatus();
+    $status = $this->resolver->getIndexStatus();
 
-    $types = $this->resolver->getIndexablePostTypes();
-    foreach ($types as $k => $v) {
-      $types[$k] = "'$v'";
-    }
-    $types = join(', ', $types);
-
-    $total = $this->resolver->db->get_var("
-      SELECT COUNT(*) FROM `{$prefix}posts` 
-      WHERE post_status NOT IN ('trash', 'auto-draft') 
-      AND post_type IN ($types) ORDER BY ID
-    ");
-    if ($status['indexing']) {
-      $indexed = $this->resolver->db->get_var("SELECT COUNT(*) FROM `{$prefix}k1_resolver_temp`");
-
-      return [
-        "indexing" => true,
-        "indexed" => $indexed,
-        "total" => $total,
-        "percentage" => $indexed / $total * 100,
-      ];
-    } else {
-      $indexed = $this->resolver->db->get_var("SELECT COUNT(*) FROM `{$prefix}k1_resolver`");
-
-      return [
-        "indexing" => false,
-        "indexed" => $indexed,
-        "total" => $total,
-        "percentage" => 100,
-      ];
-    }
+    return new \WP_REST_Response($status);
   }
 
   public function buildIndex() {

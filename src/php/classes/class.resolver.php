@@ -65,12 +65,82 @@ class Resolver {
     return $types;
   }
 
+  public function resolve($url) {
+    $url = sanitize_text_field($url ?? '');
+    $url = str_replace(
+      apply_filters('k1_resolver_url_str_replace_search', [
+        '&preview=true',
+      ]), 
+      apply_filters('k1_resolver_url_str_replace_replace', [
+        ''
+      ]), 
+      $url
+    );
+
+    // Sometimes saved URLs contain trailing slashes, sometimes they don't. It depends.
+    // It's also nicer for the user.
+    $slashed = strpos($url, "?") === false ? trailingslashit($url) : $url;
+
+    $prefix = $this->prefix;
+    $id = $this->db->get_var($this->db->prepare(
+      "SELECT object_id FROM `{$prefix}k1_resolver` 
+      WHERE permalink_sha = SHA1(%s) OR permalink_sha = SHA1(%s) 
+      LIMIT 1",
+      $url,
+      $slashed
+    ));
+
+    if ($id !== null) {
+      $post = get_post($id);
+
+      return $post;
+    }
+
+    return false;
+  }
+
   public function getIndexingStatus() {
     return get_option("k1_resolver_index_status", [
       "indexing" => false,
       "chunkCount" => 0,
       "chunks" => [],
     ]);
+  }
+
+  public function getIndexStatus() {
+    $prefix = $this->prefix;
+    $status = $this->getIndexingStatus();
+
+    $types = $this->getIndexablePostTypes();
+    foreach ($types as $k => $v) {
+      $types[$k] = "'$v'";
+    }
+    $types = join(', ', $types);
+
+    $total = $this->db->get_var("
+      SELECT COUNT(*) FROM `{$prefix}posts` 
+      WHERE post_status NOT IN ('trash', 'auto-draft') 
+      AND post_type IN ($types) ORDER BY ID
+    ");
+    if ($status['indexing']) {
+      $indexed = $this->db->get_var("SELECT COUNT(*) FROM `{$prefix}k1_resolver_temp`");
+
+      return [
+        "indexing" => true,
+        "indexed" => $indexed,
+        "total" => $total,
+        "percentage" => $indexed / $total * 100,
+      ];
+    } else {
+      $indexed = $this->db->get_var("SELECT COUNT(*) FROM `{$prefix}k1_resolver`");
+
+      return [
+        "indexing" => false,
+        "indexed" => $indexed,
+        "total" => $total,
+        "percentage" => 100,
+      ];
+    }
   }
 
   public function updateLinkToIndex($pID) {
