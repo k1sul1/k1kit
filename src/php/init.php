@@ -11,6 +11,15 @@ require 'classes/class.transient-list.php';
 require 'classes/class.resolver.php';
 require 'classes/class.rest-route.php';
 
+if (Transientify::objectCacheExists()) {
+  // Change defaults if object cache is present
+  Transientify::$useList = true;
+  Transientify::$compress = true;
+
+  error_log('using object cache');
+} else {
+  error_log('not using object cache');
+}
 $resolver = new Resolver();
 
 add_action('admin_menu', function() {

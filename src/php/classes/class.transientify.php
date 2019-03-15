@@ -7,8 +7,12 @@ class Transientify {
 
   public $expires = 0;
   public $bypass = false;
-  public $compress = false;
-  public $useList = false;
+
+  // Static defaults. Assumes no object-cache,
+  // if object-cache is present, these values will be changed
+  // in the plugin init process.
+  public static $compress = false;
+  public static $useList = false;
 
   /**
    * @param string $key Key to save the transient with. 
@@ -22,7 +26,6 @@ class Transientify {
       throw new \Exception("The key can't contain |");
     }
 
-    $ocExists = self::objectCacheExists();
     $transientOptions = apply_filters(
       'k1_transientify_transient_options', 
       array_merge([
@@ -30,8 +33,6 @@ class Transientify {
         // "bypassPermissions" => ['edit_posts'],
         "bypassPermissions" => [],
         "bypassKey" => "FORCE_FRESH",
-        "useCompression" => $ocExists, // DO NOT use compression if using WP DB as transient store
-        "useList" => $ocExists,
         "type" => "general",
       ], $transientOptions),
       $key
@@ -67,31 +68,25 @@ class Transientify {
 
     $this->bypass = $bypassParamPresentAndCorrect || $bypassPermissionPresent;
     $this->expires = $transientOptions['expires'];
-    $this->compress = $transientOptions['useCompression'];
-    $this->useList = $transientOptions['useList'];
   }
 
   public static function objectCacheExists() {
-    // This doesn't guarantee it's being used but...
-    return class_exists('\WP_Object_Cache');
+    return wp_using_ext_object_cache();
   }
 
   /**
-   * Clear a transient
+   * Delete a transient
    */
-  public static function clear(string $key = null) {
-    if (is_null($key)) {
-      throw new \Exception('No key provided');
+  public function delete() {
+    if (self::$useList) {
+      // Let the list handle deletion
+      return TransientList::delete($this->key);
     }
 
-    // if ($this->useList) {
-    //   TransientList::remove($key);
-    // }
-
-    return delete_transient($key);
+    return delete_transient($this->key);
   }
 
-  /*i*
+  /**
    * @param callable $dataCb Function that populates transient if no value is found
    * @param string &$missReason Mutate parameter to contain transient miss reason. If empty, a transient was found.
    */
@@ -102,7 +97,7 @@ class Transientify {
       $transient = get_transient($this->key);
 
       if ($transient) {
-        if ($this->compress) {
+        if (self::$compress) {
           $transient = gzuncompress($transient);
         }
 
@@ -137,7 +132,7 @@ class Transientify {
   public function set($data) {
 
     if (!$this->bypass) {
-      if ($this->useList) {
+      if (self::$useList) {
         TransientList::add($this->key, [
           'expirySeconds' => $this->expires,
           'storedData' => $data, // Used for meta generation
@@ -147,7 +142,11 @@ class Transientify {
       $copy = serialize($data);
 
       // Checking return value of set_transient is pointless; it returns false if the value being saved is identical with the previous one
-      set_transient($this->key, $this->compress ? gzcompress($copy) : $copy, $this->expires);
+      set_transient(
+        $this->key, 
+        self::$compress ? gzcompress($copy) : $copy, 
+        $this->expires
+      );
     }
 
     return $data;

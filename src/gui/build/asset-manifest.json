@@ -1,9 +1,9 @@
 {
-  "main.css": "/wp-content/plugins/k1kit/src/gui/build/static/css/main.70c93b0b.css",
-  "main.js": "/wp-content/plugins/k1kit/src/gui/build/static/js/main.e2dea930.js",
-  "main.js.map": "/wp-content/plugins/k1kit/src/gui/build/static/js/main.e2dea930.js.map",
+  "main.css": "/wp-content/plugins/k1kit/src/gui/build/static/css/main.1852d733.css",
+  "main.js": "/wp-content/plugins/k1kit/src/gui/build/static/js/main.198579f5.js",
+  "main.js.map": "/wp-content/plugins/k1kit/src/gui/build/static/js/main.198579f5.js.map",
   "index.html": "/wp-content/plugins/k1kit/src/gui/build/index.html",
-  "precache-manifest.db428344e5d964247c4811932f5c0d9b.js": "/wp-content/plugins/k1kit/src/gui/build/precache-manifest.db428344e5d964247c4811932f5c0d9b.js",
+  "precache-manifest.5aa8a4d6e05c4a807dd42171366f12dc.js": "/wp-content/plugins/k1kit/src/gui/build/precache-manifest.5aa8a4d6e05c4a807dd42171366f12dc.js",
   "service-worker.js": "/wp-content/plugins/k1kit/src/gui/build/service-worker.js",
-  "static/css/main.70c93b0b.css.map": "/wp-content/plugins/k1kit/src/gui/build/static/css/main.70c93b0b.css.map"
+  "static/css/main.1852d733.css.map": "/wp-content/plugins/k1kit/src/gui/build/static/css/main.1852d733.css.map"
 }

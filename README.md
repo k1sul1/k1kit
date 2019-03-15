@@ -31,3 +31,8 @@ As long as WP is using an actual key-value store for set_transient & get_transie
 
 ### Memcached
 Memcached will work for small sites, but it has a hardcoded maximum value size of 1MB, which makes it impossible to store the TransientList in memcached if it gets bigger than that. After that it will fail.
+
+## #GOTTAGOFAST
+The transients could be a bit faster if the abstraction of the object cache was removed. That would mean ditching WordPress *_transient functions, and using something like Predis, but the cost of loading WordPress makes that pretty much useless, and this plugin wouldn't be object cache agnostic anymore.
+
+The keys generated *can* be predictable, so it's possible to store something like REST API responses, and serve them to users directly from the object cache, and only loading WordPress if a transient doesn't exist, but that's out of the scope of this project.
