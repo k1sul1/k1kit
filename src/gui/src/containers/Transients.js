@@ -125,25 +125,46 @@ export default class Transients extends Component {
   }
 
   reorder = () => {
-    this.clearSelection()
-
     const { list, filters } = this.state
     const { full } = list
 
-    const byColumn = (name) => ({ key }) => filters[name] === 'all' ? true : key[name] === filters[name]
-    const byKey = ({ key }) => filters['key'] === '' ? true : key.original.match(filters['key'])
-    const newList = full
-      .filter(byColumn('type'))
-      .filter(byColumn('role'))
-      .filter(byColumn('prefix'))
-      .filter(byKey)
+    const requireAll = predicates => subject => predicates.every(f => f(subject))
+    const byColumn = name => ({ key }) => key[name] === filters[name]
+    const byKey = regex => ({ key }) => key.original.match(regex)
+
+    const filterableColumns = ["type", "role", "prefix"]
+
+    let selectBy = filterableColumns
+      .filter(name => filters[name] !== "all")
+      .map(byColumn)
+
+    if (filters.key !== "") {
+      selectBy.push(byKey(filters.key))
+    }
 
     this.setState({
       list: {
         ...this.state.list,
-        current: newList,
+        current: full.filter(requireAll(selectBy)),
+        selected: [],
       }
     })
+
+    // const byColumn = (name) => ({ key }) => filters[name] === 'all' ? true : key[name] === filters[name]
+    // const byKey = ({ key }) => filters['key'] === '' ? true : key.original.match(filters['key'])
+    // const newList = full
+    //   .filter(byColumn('type'))
+    //   .filter(byColumn('role'))
+    //   .filter(byColumn('prefix'))
+    //   .filter(byKey)
+
+    // this.setState({
+    //   list: {
+    //     ...this.state.list,
+    //     current: newList,
+    //     selection: [],
+    //   }
+    // })
   }
 
   select = (by, e) => {
