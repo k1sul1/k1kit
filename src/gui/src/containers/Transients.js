@@ -149,22 +149,6 @@ export default class Transients extends Component {
         selected: [],
       }
     })
-
-    // const byColumn = (name) => ({ key }) => filters[name] === 'all' ? true : key[name] === filters[name]
-    // const byKey = ({ key }) => filters['key'] === '' ? true : key.original.match(filters['key'])
-    // const newList = full
-    //   .filter(byColumn('type'))
-    //   .filter(byColumn('role'))
-    //   .filter(byColumn('prefix'))
-    //   .filter(byKey)
-
-    // this.setState({
-    //   list: {
-    //     ...this.state.list,
-    //     current: newList,
-    //     selection: [],
-    //   }
-    // })
   }
 
   select = (by, e) => {
@@ -219,8 +203,9 @@ export default class Transients extends Component {
 
     const lastSelection = newSelection.length && newSelection[newSelection.length - 1]
     const oldPos = newSelection.indexOf(index)
+
     if (oldPos > -1) {
-      newSelection = newSelection.splice(oldPos, 1)
+      newSelection = newSelection.filter((_, i) => i !== oldPos)
     } else {
       newSelection = [...newSelection, index]
     }
@@ -234,7 +219,7 @@ export default class Transients extends Component {
           const oldPos = newSelection.indexOf(number)
 
           if (oldPos > -1) {
-            newSelection = newSelection.splice(oldPos, 1)
+            newSelection = newSelection.filter((_, i) => i !== oldPos)
           } else {
             newSelection = [...newSelection, number]
           }
@@ -247,7 +232,7 @@ export default class Transients extends Component {
           const oldPos = newSelection.indexOf(number)
 
           if (oldPos > -1) {
-            newSelection = newSelection.splice(oldPos, 1)
+            newSelection = newSelection.filter((_, i) => i !== oldPos)
           } else {
             newSelection = [...newSelection, number]
           }
