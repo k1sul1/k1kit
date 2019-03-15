@@ -273,17 +273,18 @@ export default class Transients extends Component {
         <div className="info">
           <h2>Transients</h2>
 
-          <p>Manage transients.</p>
+          <p>Manage transients within TransientList.</p>
+          <p>Only transients created with \k1\Transientify, or managed by \k1\TransientList will show up here.</p>
 
           {Boolean(selected.length) && (
             <Fragment>
               <p>Do you want to delete the selected transients?</p>
 
-              <button onClick={this.deleteSelected}>
+              <button onClick={this.deleteSelected} className="button button-link-delete">
                 Yes, delete
-              </button>
+              </button>&nbsp;
 
-              <button onClick={this.clearSelection}>
+              <button onClick={this.clearSelection} className="button">
                 No, cancel selection
               </button>
             </Fragment>
