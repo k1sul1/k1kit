@@ -37,6 +37,11 @@ add_action('admin_menu', function() {
 });
 
 add_action('admin_enqueue_scripts', function() {
+  global $pagenow;
+  if ($pagenow === 'post.php') {
+    return false;
+  }
+
   $assets = json_decode(file_get_contents(__DIR__ . '/../gui/build/asset-manifest.json'));
 
   wp_enqueue_style('k1kit-css', $assets->{'main.css'});
