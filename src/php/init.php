@@ -38,7 +38,7 @@ add_action('admin_menu', function() {
 
 add_action('admin_enqueue_scripts', function() {
   global $pagenow;
-  if ($pagenow === 'post.php') {
+  if ($pagenow === 'post.php' || $pagenow === 'post-new.php') {
     return false;
   }
 
