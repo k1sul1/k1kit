@@ -15,15 +15,13 @@ if (Transientify::objectCacheExists()) {
   // Change defaults if object cache is present
   Transientify::$useList = true;
   Transientify::$compress = true;
-
-  error_log('using object cache');
 } else {
-  error_log('not using object cache');
+  // do nothing
 }
 $resolver = new Resolver();
 
 add_action('admin_menu', function() {
-  add_menu_page( 
+  add_menu_page(
     __( 'k1 kit', 'k1kit' ),
     'k1 kit',
     apply_filters('k1_settings_capability', 'manage_options'),
@@ -33,12 +31,14 @@ add_action('admin_menu', function() {
     },
     null,
     999
-  ); 
+  );
 });
 
 add_action('admin_enqueue_scripts', function() {
   global $pagenow;
-  if ($pagenow === 'post.php' || $pagenow === 'post-new.php') {
+  $blacklist = ['post.php', 'post-new.php', 'customize.php'];
+
+  if (in_array($pagenow, $blacklist)) {
     return false;
   }
 
