@@ -36,9 +36,9 @@ add_action('admin_menu', function() {
 
 add_action('admin_enqueue_scripts', function() {
   global $pagenow;
-  $blacklist = ['post.php', 'post-new.php', 'customize.php'];
+  $whitelist = ['admin.php'];
 
-  if (in_array($pagenow, $blacklist)) {
+  if (!in_array($pagenow, $whitelist)) {
     return false;
   }
 

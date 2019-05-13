@@ -38,7 +38,7 @@ class Resolver extends \k1\RestRoute {
         'permission_callback' => function() {
           return current_user_can('edit_posts');
         },
-      ],
+      ]
     );
 
     $this->registerEndpoint(
@@ -46,7 +46,7 @@ class Resolver extends \k1\RestRoute {
       [
         'methods' => 'POST',
         'callback' => [$this, 'continueIndexBuild']
-      ],
+      ]
     );
   }
 

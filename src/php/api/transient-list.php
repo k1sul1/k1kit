@@ -26,7 +26,7 @@ class TransientList extends \k1\RestRoute {
           'permission_callback' => function() {
             return current_user_can('manage_options');
           },
-        ],
+        ]
       );
     } else {
       $this->registerEndpoint(
@@ -53,7 +53,7 @@ class TransientList extends \k1\RestRoute {
   public function deleteTransient($request) {
     $params = $request->get_params();
     $transientKey = $params['transientKey'] ?? null;
-    
+
     if (!$transientKey) {
       return new \WP_REST_Response([
         'error' => "Parameter transientKey missing",
