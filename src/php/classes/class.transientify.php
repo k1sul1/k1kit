@@ -15,7 +15,7 @@ class Transientify {
   public static $useList = false;
 
   /**
-   * @param string $key Key to save the transient with. 
+   * @param string $key Key to save the transient with.
    * @param array $options Options to control the transient.
    * @throws \Exception
    */
@@ -27,7 +27,7 @@ class Transientify {
     }
 
     $transientOptions = apply_filters(
-      'k1_transientify_transient_options', 
+      'k1_transientify_transient_options',
       array_merge([
         "expires" => self::DEFAULT_EXPIRY,
         // "bypassPermissions" => ['edit_posts'],
@@ -91,7 +91,7 @@ class Transientify {
    * @param string &$missReason Mutate parameter to contain transient miss reason. If empty, a transient was found.
    */
   public function get(callable $dataCb, &$missReason = '') {
-    $missReason = '';
+    $missReason = null;
 
     if (!$this->bypass) {
       $transient = get_transient($this->key);
@@ -143,8 +143,8 @@ class Transientify {
 
       // Checking return value of set_transient is pointless; it returns false if the value being saved is identical with the previous one
       set_transient(
-        $this->key, 
-        self::$compress ? gzcompress($copy) : $copy, 
+        $this->key,
+        self::$compress ? gzcompress($copy) : $copy,
         $this->expires
       );
     }
