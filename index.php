@@ -2,8 +2,8 @@
 /**
  * Plugin name: k1 kit
  * Plugin URI: https://github.com/k1sul1/k1kit
- * Description: ???
- * Version: 1.0
+ * Description: WordPress development toolkit
+ * Version: 0.1
  * Author: @k1sul1
  * Author URI: https://github.com/k1sul1/
  * License: MIT

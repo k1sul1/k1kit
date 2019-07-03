@@ -6,62 +6,96 @@ if (!defined("ABSPATH")) {
   die("You're not supposed to be here.");
 }
 
-require 'classes/class.transientify.php';
-require 'classes/class.transient-list.php';
-require 'classes/class.resolver.php';
-require 'classes/class.rest-route.php';
+class Kit {
+  public $resolver;
+  public static $instance;
 
-if (Transientify::objectCacheExists()) {
-  // Change defaults if object cache is present
-  Transientify::$useList = true;
-  Transientify::$compress = true;
-} else {
-  // do nothing
-}
-$resolver = new Resolver();
+  public static function init(...$params) {
+    if (self::$instance) {
+      return self::$instance;
+    }
 
-add_action('admin_menu', function() {
-  add_menu_page(
-    __( 'k1 kit', 'k1kit' ),
-    'k1 kit',
-    apply_filters('k1_settings_capability', 'manage_options'),
-    'k1kit',
-    function() {
-      echo "<div id='k1kit-gui'>Loading...</div>";
-    },
-    null,
-    999
-  );
-});
+    self::$instance = new Kit(...$params);
 
-add_action('admin_enqueue_scripts', function() {
-  global $pagenow;
-  $whitelist = ['admin.php'];
-
-  if (!in_array($pagenow, $whitelist)) {
-    return false;
+    return self::$instance;
   }
 
-  $assets = json_decode(file_get_contents(__DIR__ . '/../gui/build/asset-manifest.json'));
+  private function __construct() {
+    foreach (glob(dirname(__FILE__) . "/lib/*.php") as $filename) {
+      require_once($filename);
+    }
 
-  wp_enqueue_style('k1kit-css', $assets->{'main.css'});
-  wp_enqueue_script('k1kit-mainjs', $assets->{'main.js'}, [], false, true);
-  wp_localize_script('k1kit-mainjs', 'k1kit', [
-    'nonce' => wp_create_nonce('wp_rest'),
-  ]);
-});
+    foreach (glob(dirname(__FILE__) . "/classes/class.*.php") as $filename) {
+      require_once($filename);
+    }
 
-add_action('save_post', [$resolver, 'updateLinkToIndex']);
-add_action('delete_post', [$resolver, 'deleteLinkFromIndex']);
+    if (Transientify::objectCacheExists()) {
+      // Change defaults if object cache is present
+      Transientify::$useList = true;
+      Transientify::$compress = true;
+    }
 
-add_action('plugins_loaded', function() {
+    $resolver = new Resolver();
 
-}, 666);
+    // Update resolver index when posts are deleted, added or modified
+    add_action('save_post', [$resolver, 'updateLinkToIndex']);
+    add_action('delete_post', [$resolver, 'deleteLinkFromIndex']);
 
-add_action('rest_api_init', function() use (&$resolver) {
-  require 'api/resolver.php';
-  require 'api/transient-list.php';
+    // Initialize API routes if request is a REST request
+    add_action('rest_api_init', function() use (&$resolver) {
+      require 'api/resolver.php';
+      require 'api/transient-list.php';
 
-  (new Routes\Resolver($resolver))->registerRoutes();
-  (new Routes\TransientList())->registerRoutes();
-});
+      (new Routes\Resolver($resolver))->registerRoutes();
+      (new Routes\TransientList())->registerRoutes();
+    });
+
+    // Maybe hook into other plugins at some point in future
+    add_action('plugins_loaded', function() {
+
+    }, 666);
+
+    add_action('admin_menu', [$this, 'addMenuPage']);
+    add_action('admin_enqueue_script', [$this, 'maybeEnqueueScripts']);
+
+    $this->resolver = $resolver;
+  }
+
+  public function addMenuPage() {
+    add_menu_page(
+      __( 'k1 kit', 'k1kit' ),
+      'k1 kit',
+      apply_filters('k1_settings_capability', 'manage_options'),
+      'k1kit',
+      function() {
+        echo "<div id='k1kit-gui'>Loading...</div>";
+      },
+      null,
+      999
+    );
+  }
+
+  public function maybeEnqueueScripts() {
+    global $pagenow;
+    $whitelist = ['admin.php'];
+
+    if (!in_array($pagenow, $whitelist)) {
+      return false;
+    }
+
+    $assets = json_decode(file_get_contents(__DIR__ . '/../gui/build/asset-manifest.json'));
+
+    wp_enqueue_style('k1kit-css', $assets->{'main.css'});
+    wp_enqueue_script('k1kit-mainjs', $assets->{'main.js'}, [], false, true);
+    wp_localize_script('k1kit-mainjs', 'k1kit', [
+      'nonce' => wp_create_nonce('wp_rest'),
+    ]);
+  }
+}
+
+function kit(...$params) {
+  return Kit::init(...$params);
+}
+
+// Can be called anywhere.
+kit();
