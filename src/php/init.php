@@ -35,7 +35,11 @@ class Kit {
       Transientify::$compress = true;
     }
 
-    $resolver = new Resolver();
+    if (apply_filters('k1kit/use-resolver', true)) {
+      $resolver = new Resolver();
+    } else {
+      $resolver = null;
+    }
 
     // Update resolver index when posts are deleted, added or modified
     add_action('save_post', [$resolver, 'updateLinkToIndex']);
@@ -46,7 +50,10 @@ class Kit {
       require 'api/resolver.php';
       require 'api/transient-list.php';
 
-      (new Routes\Resolver($resolver))->registerRoutes();
+      if ($resolver) {
+        (new Routes\Resolver($resolver))->registerRoutes();
+      }
+
       (new Routes\TransientList())->registerRoutes();
     });
 

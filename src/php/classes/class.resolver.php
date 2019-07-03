@@ -42,7 +42,7 @@ class Resolver {
   /**
    * @todo Make this actually available. I can't call it in the plugin deactivation hook as that
    * file has to be god-knows-what-php-version compatible for w.org
-   * 
+   *
    * uninstall.php?
    */
   private function destroyDatabase() {
@@ -70,10 +70,10 @@ class Resolver {
     $url = str_replace(
       apply_filters('k1_resolver_url_str_replace_search', [
         '&preview=true',
-      ]), 
+      ]),
       apply_filters('k1_resolver_url_str_replace_replace', [
         ''
-      ]), 
+      ]),
       $url
     );
 
@@ -83,8 +83,8 @@ class Resolver {
 
     $prefix = $this->prefix;
     $id = $this->db->get_var($this->db->prepare(
-      "SELECT object_id FROM `{$prefix}k1_resolver` 
-      WHERE permalink_sha = SHA1(%s) OR permalink_sha = SHA1(%s) 
+      "SELECT object_id FROM `{$prefix}k1_resolver`
+      WHERE permalink_sha = SHA1(%s) OR permalink_sha = SHA1(%s)
       LIMIT 1",
       $url,
       $slashed
@@ -118,8 +118,8 @@ class Resolver {
     $types = join(', ', $types);
 
     $total = $this->db->get_var("
-      SELECT COUNT(*) FROM `{$prefix}posts` 
-      WHERE post_status NOT IN ('trash', 'auto-draft') 
+      SELECT COUNT(*) FROM `{$prefix}posts`
+      WHERE post_status NOT IN ('trash', 'auto-draft')
       AND post_type IN ($types) ORDER BY ID
     ");
     if ($status['indexing']) {
@@ -192,7 +192,7 @@ class Resolver {
 
     $all = $this->db->get_results("
       SELECT ID FROM `{$prefix}posts`
-      WHERE post_status NOT IN ('trash', 'auto-draft') 
+      WHERE post_status NOT IN ('trash', 'auto-draft')
       AND post_type IN ($types) ORDER BY ID
     ");
     $chunks = array_chunk($all, 250);
@@ -242,7 +242,7 @@ class Resolver {
 
       wp_remote_post(get_site_url() . '/wp-json/k1/v1/resolver/index/continue', [
         "blocking" => false,
-        "sslverify" => !WP_DEBUG,
+        "sslverify" => !isProd(),
       ]);
     }
 
