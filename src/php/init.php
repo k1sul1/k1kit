@@ -65,7 +65,7 @@ class Kit {
     }, 666);
 
     add_action('admin_menu', [$this, 'addMenuPage']);
-    add_action('admin_enqueue_script', [$this, 'maybeEnqueueScripts']);
+    add_action('admin_enqueue_scripts', [$this, 'maybeEnqueueScripts']);
 
     $this->resolver = $resolver;
   }

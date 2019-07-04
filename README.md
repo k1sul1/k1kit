@@ -132,7 +132,28 @@ Some functionality exposes REST API endpoints: (note that this list may be out o
 
 This repository by itself is a bit raw, be sure to see [k1sul1/wordpress-theme-base](https://github.com/k1sul1/wordpress-theme-base) on how I'm using it in client projects, and [k1sul1/kisu.li](https://github.com/k1sul1/kisu.li) in my personal portfolio. (WIP, not public _yet_)
 
-## Word of warning
+## Warnings
+### Resolver
+The resolver is on by default. You can turn it off with `add_filter('k1kit/use-resolver', '__return_false')`. If you don't use it, you should turn it off.
+
+When you activate the plugin, it will build the resolver index. The index will contain all post types that are marked as public, but you can change that with a filter. As you add, modify or delete posts, the index will be updated automatically.
+
+**If you change the site domain** (`wp search-replace`), the index will be corrupted, as the index table indexes are sha1 hashes of the URLs. You can easily fix this by rebuilding the index at any time from the admin. The old index will remain functional until the new version has been generated.
+
+The database table is very lightweight:
+```
+MariaDB [wordpress]> DESCRIBE wp_k1_resolver;
++---------------+---------------+------+-----+---------+-------+
+| Field         | Type          | Null | Key | Default | Extra |
++---------------+---------------+------+-----+---------+-------+
+| object_id     | bigint(20)    | NO   | PRI | NULL    |       |
+| permalink     | varchar(2048) | NO   |     | NULL    |       |
+| permalink_sha | char(40)      | NO   | UNI | NULL    |       |
++---------------+---------------+------+-----+---------+-------+
+3 rows in set (0.002 sec)
+```
+
+### Transients
 Overhauling the transients kinda requires overhauling the software behind them. You _can_ use WP DB as the transient store, but you shouldn't.
 
 If theres's no object-cache.php present, data compression will be turned off, and there won't be a TransientList.
@@ -141,7 +162,7 @@ This is tested with Redis, with the most popular plugins: [WP Redis](https://wor
 
 As long as WP is using an actual key-value store for set_transient & get_transient, this plugin should work just fine.
 
-### Memcached
+#### Memcached
 Memcached will work for small sites, but it has a hardcoded maximum value size of 1MB, which makes it impossible to store the TransientList in memcached if it gets bigger than that. After that it will fail.
 
 ## #GOTTAGOFAST

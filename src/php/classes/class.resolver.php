@@ -14,7 +14,7 @@ class Resolver {
       $this->prefix = $this->db->prefix;
     }
 
-    $dbCreated = get_option('k1_resolver_db_created', false);
+    $dbCreated = get_option('k1kit_resolver_db_created', false);
 
     if (!$dbCreated) {
       $this->createDatabase();
@@ -36,7 +36,7 @@ class Resolver {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE={$collate};
     ");
 
-    update_option('k1_resolver_db_created', true);
+    update_option('k1kit_resolver_db_created', true);
   }
 
   /**
@@ -50,14 +50,14 @@ class Resolver {
     $this->db->query("DROP TABLE IF EXISTS `{$prefix}resolver`;");
     $this->db->query("DROP TABLE IF EXISTS `{$prefix}resolver_temp`;");
 
-    delete_option('k1_resolver_db_created');
-    delete_option('k1_resolver_index_status');
+    delete_option('k1kit_resolver_db_created');
+    delete_option('k1kit_resolver_index_status');
   }
 
   public function getIndexablePostTypes() {
     $types = apply_filters(
       'k1kit/resolver/index/indexableTypes',
-      get_post_types(apply_filters('k1kit/resolver/queryArgsForIndex', [
+      get_post_types(apply_filters('k1kit/resolver/index/queryArgs', [
         'public' => true,
       ]))
     );
@@ -80,8 +80,8 @@ class Resolver {
     // Sometimes saved URLs contain trailing slashes, sometimes they don't. It depends.
     // It's also nicer for the user.
     $slashed = strpos($url, "?") === false ? trailingslashit($url) : $url;
-
     $prefix = $this->prefix;
+
     $id = $this->db->get_var($this->db->prepare(
       "SELECT object_id FROM `{$prefix}k1_resolver`
       WHERE permalink_sha = SHA1(%s) OR permalink_sha = SHA1(%s)
@@ -100,7 +100,7 @@ class Resolver {
   }
 
   public function getIndexingStatus() {
-    return get_option("k1kit/resolver/index/status", [
+    return get_option("k1kit_resolver_index_status", [
       "indexing" => false,
       "chunkCount" => 0,
       "chunks" => [],
@@ -110,6 +110,9 @@ class Resolver {
   public function getIndexStatus() {
     $prefix = $this->prefix;
     $status = $this->getIndexingStatus();
+
+    error_log(print_r($status, true));
+    error_log(isProd() ? 'is prod' : 'isdev');
 
     $types = $this->getIndexablePostTypes();
     foreach ($types as $k => $v) {
@@ -197,7 +200,7 @@ class Resolver {
     ");
     $chunks = array_chunk($all, 250);
 
-    update_option("k1_resolver_index_status", [
+    update_option("k1kit_resolver_index_status", [
       "indexing" => true,
       "chunkCount" => count($chunks),
       "chunks" => $chunks,
@@ -234,7 +237,7 @@ class Resolver {
     if (count($status['chunks']) === 0) {
       $this->endIndexing();
     } else {
-      update_option("k1_resolver_index_status", [
+      update_option("k1kit_resolver_index_status", [
         "indexing" => true,
         "chunkCount" => $status['chunkCount'],
         "chunks" => $status['chunks'],
