@@ -13,9 +13,9 @@ class Resolver extends \k1\RestRoute {
         'methods' => 'GET',
         'callback' => [$this, 'resolveURL']
       ],
-      [
-        'expires' => \HOUR_IN_SECONDS
-      ]
+      // [
+        // 'expires' => \HOUR_IN_SECONDS
+      // ]
     );
 
     $this->registerEndpoint(
@@ -62,13 +62,13 @@ class Resolver extends \k1\RestRoute {
 
       global $wp_rest_server;
       $req = new \WP_REST_Request("GET", "/wp/v2/{$endpoint}/{$id}");
-      $req = apply_filters('k1_resolver_resolve_request', $req, $request);
+      $req = apply_filters('k1kit/resolver/resolve/request', $req, $request);
 
       $response = rest_do_request($req);
 
       $data = $wp_rest_server->response_to_data($response, true);
       $response->set_data($data);
-      $response = apply_filters('k1_resolver_resolve_response', $response, $request);
+      $response = apply_filters('k1kit/resolver/resolve/response', $response, $request);
 
       return $response;
     } else {

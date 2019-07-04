@@ -11,8 +11,8 @@ class TransientList {
   public static $listName = 'k1_transientlist';
 
   /**
-   * Write the list to store. 
-   * 
+   * Write the list to store.
+   *
    * @return bool True if list was changed, false otherwise.
    */
   protected static function write() {
@@ -35,10 +35,10 @@ class TransientList {
     $transientKey = sanitize_text_field($transientKey);
     $removed = false;
     self::read();
-    
+
     if (isset(self::$items[$transientKey])) {
       unset(self::$items[$transientKey]);
-      $removed = delete_transient($transientKey); 
+      $removed = delete_transient($transientKey);
     }
 
     if ($removed) {
@@ -70,15 +70,15 @@ class TransientList {
       if (is_object($stored)) {
         $className = get_class($stored);
         switch ($className) {
-          case "WP_REST_Response": 
+          case "WP_REST_Response":
             $response = $stored->data;
             $meta = array_merge($meta, [
               'type' => 'WP_REST_Response',
               'route' => $stored->get_matched_route(),
             ]);
             break;
-          default: 
-            $meta = apply_filters('k1_transientlist_object_meta', array_merge($meta, [
+          default:
+            $meta = apply_filters('k1kit/transientlist/addObjectMeta', array_merge($meta, [
               'type' => $className,
             ]), $data, $transientKey);
             break;
@@ -87,7 +87,7 @@ class TransientList {
     }
 
     unset($meta['storedData']);
-    $meta = apply_filters('k1_transientlist_general_meta', $meta, $data, $transientKey);
+    $meta = apply_filters('k1kit/transientlist/addGeneralMeta', $meta, $data, $transientKey);
 
     self::read();
     self::$items[$transientKey] = $meta;

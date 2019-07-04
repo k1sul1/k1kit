@@ -22,7 +22,7 @@ class Resolver {
   }
 
   private function createDatabase() {
-    $collate = apply_filters('k1_resolver_db_collate_', !empty(\DB_COLLATE) ? \DB_COLLATE : 'utf8mb4_swedish_ci');
+    $collate = apply_filters('k1kit/resolver/dbCollate', !empty(\DB_COLLATE) ? \DB_COLLATE : 'utf8mb4_swedish_ci');
     $prefix = $this->prefix;
 
     $this->db->query("DROP TABLE IF EXISTS `{$prefix}k1_resolver`;");
@@ -56,8 +56,8 @@ class Resolver {
 
   public function getIndexablePostTypes() {
     $types = apply_filters(
-      'k1_resolver_indexable_post_types',
-      get_post_types(apply_filters('k1_resolver_indexable_post_types_queryargs', [
+      'k1kit/resolver/index/indexableTypes',
+      get_post_types(apply_filters('k1kit/resolver/queryArgsForIndex', [
         'public' => true,
       ]))
     );
@@ -68,10 +68,10 @@ class Resolver {
   public function resolve($url) {
     $url = sanitize_text_field($url ?? '');
     $url = str_replace(
-      apply_filters('k1_resolver_url_str_replace_search', [
+      apply_filters('k1kit/resolver/resolve/urlReplace/search', [
         '&preview=true',
       ]),
-      apply_filters('k1_resolver_url_str_replace_replace', [
+      apply_filters('k1kit/resolver/resolve/urlReplace/replace', [
         ''
       ]),
       $url
@@ -100,7 +100,7 @@ class Resolver {
   }
 
   public function getIndexingStatus() {
-    return get_option("k1_resolver_index_status", [
+    return get_option("k1kit/resolver/index/status", [
       "indexing" => false,
       "chunkCount" => 0,
       "chunks" => [],

@@ -74,7 +74,7 @@ class Kit {
     add_menu_page(
       __( 'k1 kit', 'k1kit' ),
       'k1 kit',
-      apply_filters('k1_settings_capability', 'manage_options'),
+      apply_filters('k1kit/capabilityRequiredForOptions', 'manage_options'),
       'k1kit',
       function() {
         echo "<div id='k1kit-gui'>Loading...</div>";

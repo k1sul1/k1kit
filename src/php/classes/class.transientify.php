@@ -27,7 +27,7 @@ class Transientify {
     }
 
     $transientOptions = apply_filters(
-      'k1_transientify_transient_options',
+      'k1kit/transientify/transient/options',
       array_merge([
         "expires" => self::DEFAULT_EXPIRY,
         // "bypassPermissions" => ['edit_posts'],
@@ -37,8 +37,8 @@ class Transientify {
       ], $transientOptions),
       $key
     );
-    $customKeyPrefix = apply_filters('k1_transientify_custom_key_prefix', false, $key, $transientOptions);
-    $separateByRole = apply_filters('k1_transientify_separate_by_role', true, $key, $transientOptions);
+    $customKeyPrefix = apply_filters('k1kit/transientify/customKeyPrefix', false, $key, $transientOptions);
+    $separateByRole = apply_filters('k1kiy/transientify/separateByRole', true, $key, $transientOptions);
 
     if ($customKeyPrefix) {
       $this->key = $customKeyPrefix;
