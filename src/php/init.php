@@ -41,9 +41,11 @@ class Kit {
       $resolver = null;
     }
 
-    // Update resolver index when posts are deleted, added or modified
-    add_action('save_post', [$resolver, 'updateLinkToIndex']);
-    add_action('delete_post', [$resolver, 'deleteLinkFromIndex']);
+    if ($resolver) {
+      // Update resolver index when posts are deleted, added or modified
+      add_action('save_post', [$resolver, 'updateLinkToIndex']);
+      add_action('delete_post', [$resolver, 'deleteLinkFromIndex']);
+    }
 
     // Initialize API routes if request is a REST request
     add_action('rest_api_init', function() use (&$resolver) {
