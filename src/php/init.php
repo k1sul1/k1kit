@@ -52,6 +52,33 @@ class Kit {
       require 'api/resolver.php';
       require 'api/transient-list.php';
 
+      /**
+       * Get all REST enabled post types
+       */
+      $postTypes = array_filter(
+        get_post_types([], 'objects'),
+        function($type) {
+          return $type->show_in_rest === true;
+        }
+      );
+
+      foreach ($postTypes as $type) {
+
+        if (apply_filters('k1kit/addAcfToAPI', true)) {
+          register_rest_field($type->name, 'acf', [
+            'get_callback' => '\k1\REST\getCustomFields',
+          ]);
+
+        }
+
+        if (apply_filters('k1kit/addBlocksToAPI', true)) {
+          register_rest_field($type->name, 'blocks', [
+            'get_callback' => '\k1\REST\getBlockData',
+          ]);
+        }
+      }
+
+
       if ($resolver) {
         (new Routes\Resolver($resolver))->registerRoutes();
       }
