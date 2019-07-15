@@ -76,6 +76,13 @@ class Kit {
             'get_callback' => '\k1\REST\getBlockData',
           ]);
         }
+
+
+        if (apply_filters('k1kit/addSeoToAPI', true)) {
+          register_rest_field($type->name, 'seo', [
+            'get_callback' => '\k1\REST\getSeoData',
+          ]);
+        }
       }
 
 
