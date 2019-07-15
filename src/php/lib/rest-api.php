@@ -56,3 +56,40 @@ function getSeoData($post) {
 
   return false;
 }
+
+function changeAcfValue($value, $postId, $field) {
+  $getRestResponseWithId = function ($id) {
+    // copied from resolver api
+
+    $post = get_post($id);
+    $type = $post->post_type;
+    $id = $post->ID;
+    $ptypeObject = get_post_type_object($type);
+    $endpoint = !empty($ptypeObject->rest_base) ? $ptypeObject->rest_base : $type;
+
+    global $wp_rest_server;
+    $req = new \WP_REST_Request("GET", "/wp/v2/{$endpoint}/{$id}");
+
+    $response = rest_do_request($req);
+
+    $data = $wp_rest_server->response_to_data($response, true);
+    $response->set_data($data);
+
+    return $response->data;
+  };
+
+  switch ($field['type']) {
+    case 'post_object':
+      if (!empty($value)) {
+        $value = $getRestResponseWithId((int) $value);
+      }
+    break;
+
+    case 'relationship':
+      foreach ($value as $k => $id) {
+        $value[$k] = $getRestResponseWithId($id);
+      }
+    break;
+  }
+  return $value;
+}
