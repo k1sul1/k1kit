@@ -50,7 +50,7 @@ function getSeoData($post) {
         'og:title' => $seo->get_open_graph_title($id),
         'og:image' => $seo->get_social_image_url_from_post_thumbnail($id),
       ],
-      // 'canonical' => $seo->get_canonical_url(['id' => $id]), // ?: false,
+      'canonical' => $seo->create_canonical_url(['id' => $id, 'get_custom_field' => true]),
     ];
   }
 
