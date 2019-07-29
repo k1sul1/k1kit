@@ -30,6 +30,10 @@ function getBlockData($post) {
         acf_reset_meta($block['attrs']['id']);
 
         $data[$i] = $block;
+      } else if ($block['blockName'] === 'core/shortcode') {
+        $block['innerHTML'] = \do_shortcode($block['innerHTML']);
+
+        $data[$i] = $block;
       }
     }
   }
@@ -86,8 +90,10 @@ function changeAcfValue($value, $postId, $field) {
     break;
 
     case 'relationship':
-      foreach ($value as $k => $id) {
-        $value[$k] = $getRestResponseWithId($id);
+      if (is_array($value)) {
+        foreach ($value as $k => $id) {
+          $value[$k] = $getRestResponseWithId($id);
+        }
       }
     break;
   }
