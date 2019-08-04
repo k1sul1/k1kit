@@ -111,9 +111,6 @@ class Resolver {
     $prefix = $this->prefix;
     $status = $this->getIndexingStatus();
 
-    error_log(print_r($status, true));
-    error_log(isProd() ? 'is prod' : 'isdev');
-
     $types = $this->getIndexablePostTypes();
     foreach ($types as $k => $v) {
       $types[$k] = "'$v'";
