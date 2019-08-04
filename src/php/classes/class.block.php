@@ -46,7 +46,7 @@ abstract class Block {
       'mode' => 'auto',
       'category' => 'layout',
       'supports' => [
-        'align' => false,
+        'align' => true,
         'mode' => true,
         'multiple' => true,
       ],
