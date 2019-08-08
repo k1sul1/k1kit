@@ -77,17 +77,54 @@ class Resolver {
       $url
     );
 
-    // Sometimes saved URLs contain trailing slashes, sometimes they don't. It depends.
-    // It's also nicer for the user.
-    $slashed = strpos($url, "?") === false ? trailingslashit($url) : $url;
-    $prefix = $this->prefix;
+    // Ensure trailing slash if no query string is present
+    $hasQuerystring = strpos($url, "?") !== false;
+    $slashed = $hasQuerystring ? trailingslashit($url) : $url;
 
+    // If it has a query string, that query string has to go. Most of the time.
+    if ($hasQuerystring) {
+      $parsed = \parse_url($url);
+
+      if (!$parsed) {
+        throw new \Exception('Malformed URL passed to Resolver');
+      }
+
+      $params = [];
+      $allowed = [];
+
+      // The url can keep these query parameters. Others must go.
+      $whitelist = apply_filters('k1kit/resolver/resolve/paramWhitelist', [
+        'p',
+        'post_type',
+        'page_id',
+      ]);
+      parse_str($parsed["query"], $params);
+
+      foreach ($params as $k => $v) {
+        if ($whitelist[$k]) {
+          $allowed[$k] = $v;
+        }
+      }
+
+      if (count($allowed) !== 0) {
+        $parsed["query"] = \http_build_query($allowed);
+      } else {
+        $parsed["query"] = null;
+      }
+
+      $withWhitelistedParams = \k1\HTTP\buildUrl($parsed);
+    } else {
+      // No params, no need to whitelist
+      $withWhitelistedParams = $url;
+    }
+
+    $prefix = $this->prefix;
     $id = $this->db->get_var($this->db->prepare(
       "SELECT object_id FROM `{$prefix}k1_resolver`
       WHERE permalink_sha = SHA1(%s) OR permalink_sha = SHA1(%s)
       LIMIT 1",
-      $url,
-      $slashed
+      $slashed,
+      $withWhitelistedParams
     ));
 
     if ($id !== null) {
