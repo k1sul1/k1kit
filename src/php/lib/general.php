@@ -86,6 +86,10 @@ function dotty($data = [], $key = "", $default = false) {
  * @return array
  */
 function params($defaults = [], $provided = []) {
+  if (!is_array($defaults) || !is_array($provided)) {
+    throw new \Exception('Invalid data provided to params, both parameters must be arrays!');
+  }
+
   return array_replace_recursive($defaults, array_filter($provided, function ($value) {
     if (is_bool($value)) {
       return true; // empty() fails on booleans
