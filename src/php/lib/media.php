@@ -7,6 +7,7 @@ namespace k1\Media;
 function svg(string $filename, array $data = []) {
   $data = \k1\params([
     'className' => ['k1-svg'],
+    'manifest' => 'client',
   ], $data);
   $wrapper = function($svgEl) use ($data) {
     $class = \k1\className(...$data['className']);
@@ -15,7 +16,7 @@ function svg(string $filename, array $data = []) {
   };
 
   return $wrapper(file_get_contents(
-    \k1\app()->manifests['client']->getAssetFilename('img/' . $filename, false)
+    \k1\app()->manifests[$data['manifest']]->getAssetFilename('img/' . $filename, false)
   ));
 }
 
