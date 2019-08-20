@@ -180,7 +180,7 @@ function withTransient($data, $opts = [], &$missReason = null) {
 }
 
 function transientResult($missReason = null) {
-  if (\is_null($reason)) {
+  if (\is_null($missReason)) {
     return 'Hit';
   }
 
