@@ -15,8 +15,15 @@ function svg(string $filename, array $data = []) {
     return "<div $class>$svgEl</div>";
   };
 
+  $manifests = \k1\app()->manifests;
+  $manifest = $manifests[$data['manifest']] ?? false;
+
+  if (!$manifest) {
+    throw new \Exception("Tried to use an svg from a non-existent manifest: $data[manifest].");
+  }
+
   return $wrapper(file_get_contents(
-    \k1\app()->manifests[$data['manifest']]->getAssetFilename('img/' . $filename, false)
+    $manifest->getAssetFilename('img/' . $filename, false)
   ));
 }
 
