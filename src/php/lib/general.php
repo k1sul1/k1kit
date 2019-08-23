@@ -123,7 +123,18 @@ function content($content = null) {
     $content = get_the_content();
   }
 
-  return apply_filters("the_content", $content);
+  // Nope. https://github.com/k1sul1/k1kit/issues/2
+  // return apply_filters("the_content", $content);
+  
+  // $content = \do_blocks($content); // Causes infinite loops that are FUCKING NIGHTMARE to debug.
+  $content = \wptexturize($content);
+  $content = \convert_smilies($content);
+  $content = \wpautop($content);
+  $content = \shortcode_unautop($content);
+  $content = \prepend_attachment($content);
+  $content = \wp_make_content_images_responsive($content);
+  
+  return $content;
 }
 
 function gutenbergContent() {
