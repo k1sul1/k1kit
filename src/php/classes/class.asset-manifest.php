@@ -36,7 +36,7 @@ class AssetManifest {
         "k1-$basename",
         $filename,
         $dependencies,
-        \k1\isDev() ? date('U') : null,
+        \k1\isDev() ? date('U') : null
       );
     } else {
       throw new \Exception("Unable to enqueue asset $assetName ($filename) due to type being unsupported");
