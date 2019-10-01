@@ -52,7 +52,10 @@ class Transientify {
 
       if ($user && $user->ID) {
         $data = get_userdata($user->ID);
-        $primaryRole = $data->roles[0];
+
+        // I have no fucking clue how it's possible that an user without ANY roles exists, but
+        // according to logs it is. Sometimes I hate this POS they call WordPress.
+        $primaryRole = $data->roles[0] ?? 'visitor';
 
         $this->key = $this->key . "$primaryRole|";
       } else {

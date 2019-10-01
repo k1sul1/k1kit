@@ -20,7 +20,11 @@ function getCustomFields($post) {
 }
 
 function getBlockData($post) {
-  $data = has_blocks($post['content']['raw']) ? parse_blocks($post['content']['raw']) : false;
+  $data = false;
+
+  if (isset($post['content']) && isset($post['content']['raw'])) {
+    $data = has_blocks($post['content']['raw']) ? parse_blocks($post['content']['raw']) : false;
+  }
 
   if ($data) {
     foreach ($data as $i => $block) {
