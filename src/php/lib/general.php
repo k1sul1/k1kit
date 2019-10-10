@@ -143,14 +143,15 @@ function content($content = null) {
  * or use wp_link_pages to generate a proper pagination.
  */
 function gutenbergContent() {
-  global $numpages, $page, $multipage;
+  global $numpages, $page, $multipage, $post;
 
-  $attrs = "";
+  $id = \esc_attr($post->ID);
+  $attrs = "data-id='$id'";
   if ($multipage) {
     $p = \esc_attr($page);
     $pages = \esc_attr($numpages);
 
-    $attrs = "data-page='$p' data-pages='$pages'";
+    $attrs = "$attrs data-page='$p' data-pages='$pages'";
   }
 
   echo "<div class='k1-gutenberg' $attrs>";
