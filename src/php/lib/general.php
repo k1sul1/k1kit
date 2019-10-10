@@ -125,7 +125,7 @@ function content($content = null) {
 
   // Nope. https://github.com/k1sul1/k1kit/issues/2
   // return apply_filters("the_content", $content);
-  
+
   // $content = \do_blocks($content); // Causes infinite loops that are FUCKING NIGHTMARE to debug.
   $content = \wptexturize($content);
   $content = \convert_smilies($content);
@@ -133,12 +133,27 @@ function content($content = null) {
   $content = \shortcode_unautop($content);
   $content = \prepend_attachment($content);
   $content = \wp_make_content_images_responsive($content);
-  
+
   return $content;
 }
 
+/**
+ * the_content alternative, wraps content in a div for uniform styles, and a little extra.
+ * If page breaks (<!-- nextpage -->) are used, you can either load the next page with JS,
+ * or use wp_link_pages to generate a proper pagination.
+ */
 function gutenbergContent() {
-  echo "<div class='k1-gutenberg'>";
+  global $numpages, $page, $multipage;
+
+  $attrs = "";
+  if ($multipage) {
+    $p = \esc_attr($page);
+    $pages = \esc_attr($numpages);
+
+    $attrs = "data-page='$p' data-pages='$pages'";
+  }
+
+  echo "<div class='k1-gutenberg' $attrs>";
   \the_content();
   echo "</div>";
 }
