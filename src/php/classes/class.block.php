@@ -43,7 +43,7 @@ abstract class Block {
       'title' => $this->getName(),
       'name' => strtolower($this->getName()),
       'render_callback' => [$this, 'print'],
-      'mode' => 'auto',
+      'mode' => 'preview',
       'category' => 'layout',
       'supports' => [
         'align' => true,
