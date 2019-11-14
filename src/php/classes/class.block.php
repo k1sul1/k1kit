@@ -80,7 +80,7 @@ abstract class Block {
    * @param $content Has no use (in custom blocks), as far as I know.
    */
   public function print($block, $content = '', $isPreview = false, $postId) {
-    $fields = \get_fields(); // Get ALL fields for block
+    $fields = \get_fields() ?: []; // Get ALL fields for block
     $transientSettings = !$isPreview ? $this->getTransientSettings($block, $postId) : false;
 
     if (!empty($transientSettings) && \class_exists('\k1\Transientify')) {
