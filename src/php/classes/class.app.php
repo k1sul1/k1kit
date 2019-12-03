@@ -35,6 +35,10 @@ class App {
     return $this->blocks[$name];
   }
 
+  public function getBlocks() {
+    return $this->blocks;
+  }
+
   /**
    * Forbid initialization by new by making the constructor private.
    * Use the \k1\app() function.
