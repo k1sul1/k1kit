@@ -61,12 +61,13 @@ abstract class Block {
   public function getTransientSettings($block, $postId) {
     $blockSettings = $this->getSettings();
     $blockId = $block['id'];
-    $key = "$blockSettings[name]_{$postId}_{$blockId}";
+    $paged = get_query_var('paged', 1);
+    $key = "$blockSettings[name]_{$postId}_{$blockId}_$paged";
 
     return [
       'key' => $key,
       'options' => [
-        'expires' => \HOUR_IN_SECONDS,
+        'expires' => \MINUTE_IN_SECONDS * 5,
         'type' => 'acf-block',
         'bypassPermissions' => ['edit_posts'],
       ]
