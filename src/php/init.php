@@ -123,13 +123,16 @@ class Kit {
     global $pagenow;
     $whitelist = ['admin.php'];
 
-    if (!in_array($pagenow, $whitelist)) {
-      return false;
-    }
 
     $assets = json_decode(file_get_contents(__DIR__ . '/../gui/build/asset-manifest.json'));
 
     wp_enqueue_style('k1kit-css', $assets->{'main.css'});
+
+    // CSS enqueue is fine, it's just JS that breaks Gutenberg.
+    if (!in_array($pagenow, $whitelist)) {
+      return false;
+    }
+
     wp_enqueue_script('k1kit-mainjs', $assets->{'main.js'}, [], false, true);
     wp_localize_script('k1kit-mainjs', 'k1kit', [
       'nonce' => wp_create_nonce('wp_rest'),

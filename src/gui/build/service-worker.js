@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/wp-content/plugins/k1kit/src/gui/build/precache-manifest.6ec95cf8558382fc8468b47f181cd9bc.js"
+  "/wp-content/plugins/k1kit/src/gui/build/precache-manifest.ba3b739a2aa74daea386563138a38bd5.js"
 );
 
 workbox.clientsClaim();
@@ -30,5 +30,5 @@ workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
 
 workbox.routing.registerNavigationRoute("/wp-content/plugins/k1kit/src/gui/build/index.html", {
   
-  blacklist: [/^\/_/,/\/[^\/]+\.[^\/]+$/],
+  blacklist: [/^\/_/,/\/[^/]+\.[^/]+$/],
 });

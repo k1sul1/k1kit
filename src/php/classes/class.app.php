@@ -86,5 +86,7 @@ class App {
         $this->blocks[$instance->getName()] = $instance;
       }
     });
+
+    $this->i18n->registerString('Block: Preview helper', 'Block is in preview mode. Switch to Edit mode to change it. Click to activate block and then click the pen.');
   }
 }

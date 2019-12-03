@@ -73,6 +73,13 @@ abstract class Block {
     ];
   }
 
+  public function renderPreviewNotice($block, $postId) {
+    $app = \k1\app();
+    echo "<div class='k1-block__preview-notice'><p>";
+    echo $app->i18n->getText('Block: Preview helper');
+    echo "</p></div>";
+  }
+
   /**
    * Output the block. This is the render_callback of \register_block_type.
    *
@@ -82,6 +89,10 @@ abstract class Block {
   public function print($block, $content = '', $isPreview = false, $postId) {
     $fields = \get_fields() ?: []; // Get ALL fields for block
     $transientSettings = !$isPreview ? $this->getTransientSettings($block, $postId) : false;
+
+    if ($isPreview) {
+      $this->renderPreviewNotice($block, $postId);
+    }
 
     if (!empty($transientSettings) && \class_exists('\k1\Transientify')) {
       $transient = new Transientify($transientSettings['key'], $transientSettings['options']);

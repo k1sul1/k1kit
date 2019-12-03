@@ -186,3 +186,46 @@
     }
   }
 }
+
+.k1-block {
+  &__preview-notice {
+    display: none; 
+
+    @media (min-width: 600px) {
+      border: 2px solid #ccc;
+      padding: 0 1rem;
+      position: absolute;
+      top: -210px;
+      width: 100%;
+      z-index: 1000;
+      background: #fff;
+      pointer-events: none;
+
+      p {
+        margin: 0;
+        margin-bottom: 10px;
+      }
+  
+      &:after {
+        content: '';
+        display: block;
+        background: url('edit-mode.png') no-repeat;
+        background-size: contain;
+        width: 100%;
+        height: 60px;
+      }
+    }
+  }
+}
+
+.acf-block-preview {
+  position: relative;
+
+  &:hover {
+    @media (min-width: 600px) {
+      .k1-block__preview-notice {
+        display: block;
+      }
+    }
+  }
+}
