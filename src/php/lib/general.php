@@ -119,7 +119,7 @@ function title($title = null) {
 }
 
 function content($content = null) {
-  if (!$content) {
+  if (is_null($content)) {
     $content = get_the_content();
   }
 
@@ -142,7 +142,7 @@ function content($content = null) {
  * If page breaks (<!-- nextpage -->) are used, you can either load the next page with JS,
  * or use wp_link_pages to generate a proper pagination.
  */
-function gutenbergContent() {
+function gutenbergContent($paginationOpts = null) {
   global $numpages, $page, $multipage, $post;
 
   $id = \esc_attr($post->ID);
@@ -156,6 +156,11 @@ function gutenbergContent() {
 
   echo "<div class='k1-gutenberg' $attrs>";
   \the_content();
+
+  if ($paginationOpts !== null) {
+    \wp_link_pages($paginationOpts);
+  }
+
   echo "</div>";
 }
 
