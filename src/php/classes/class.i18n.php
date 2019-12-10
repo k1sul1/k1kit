@@ -42,6 +42,12 @@ class i18n {
     return \pll_translate_string($this->strings[$name], $languageSlug ?? $this->getLanguage());
   }
 
+  public function getTextSprintf(string $name, array $replacements, $languageSlug = null) {
+    $mangled = $this->getText($name, $languageSlug);
+
+    return sprintf($mangled, ...$replacements);
+  }
+
   public function getOptionName(string $x, string $languageSlug = null) {
     $prefix = $languageSlug ?? $this->getLanguage();
 
