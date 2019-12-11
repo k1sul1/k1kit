@@ -154,13 +154,14 @@ class Resolver {
     }
     $types = join(', ', $types);
 
-    $total = $this->db->get_var("
+    $total = (int) $this->db->get_var("
       SELECT COUNT(*) FROM `{$prefix}posts`
       WHERE post_status NOT IN ('trash', 'auto-draft')
       AND post_type IN ($types) ORDER BY ID
     ");
     if ($status['indexing']) {
-      $indexed = $this->db->get_var("SELECT COUNT(*) FROM `{$prefix}k1_resolver_temp`");
+      $this->ensureTempTableExistence();
+      $indexed = (int) $this->db->get_var("SELECT COUNT(*) FROM `{$prefix}k1_resolver_temp`");
 
       return [
         "indexing" => true,
@@ -169,7 +170,7 @@ class Resolver {
         "percentage" => $indexed / $total * 100,
       ];
     } else {
-      $indexed = $this->db->get_var("SELECT COUNT(*) FROM `{$prefix}k1_resolver`");
+      $indexed = (int) $this->db->get_var("SELECT COUNT(*) FROM `{$prefix}k1_resolver`");
 
       return [
         "indexing" => false,
@@ -209,16 +210,22 @@ class Resolver {
     }
   }
 
+  private function ensureTempTableExistence() {
+    $prefix = $this->prefix;
+
+    $this->db->query("CREATE TABLE IF NOT EXISTS `{$prefix}k1_resolver_temp` LIKE `{$prefix}k1_resolver`");
+  }
+
   /**
    * Start the indexing process by creating a temporary table.
    */
-  public function startIndexing() {
-    if ($this->getIndexingStatus()['indexing']) {
+  public function startIndexing($force = false) {
+    if (!$force && $this->getIndexingStatus()['indexing']) {
       return $this->continueIndexing();
     }
 
     $prefix = $this->prefix;
-    $this->db->query("CREATE TABLE IF NOT EXISTS `{$prefix}k1_resolver_temp` LIKE `{$prefix}k1_resolver`");
+    $this->ensureTempTableExistence();
     $this->db->query("TRUNCATE TABLE `{$prefix}k1_resolver_temp`");
 
     $types = $this->getIndexablePostTypes();
@@ -250,6 +257,7 @@ class Resolver {
   public function continueIndexing() {
     $status = $this->getIndexingStatus();
     $prefix = $this->prefix;
+
     if ($status['indexing'] === false) {
       return false;
     }
@@ -265,7 +273,11 @@ class Resolver {
         'permalink_sha' => sha1($link),
       ];
 
-      $this->db->insert("{$prefix}k1_resolver_temp", $post, ['%d', '%s', '%s']);
+      if (!$this->db->insert("{$prefix}k1_resolver_temp", $post, ['%d', '%s', '%s'])) {
+        error_log("\k1\Resolver: Failed to write into temp table: " . print_r($post, true));
+      } else {
+        // error_log("\k1\Resolver: Wrote to into temp table {$prefix}k1_resolver_temp: " . print_r($post, true));
+      }
     }
 
     if (count($status['chunks']) === 0) {
@@ -295,10 +307,11 @@ class Resolver {
     }
 
     $prefix = $this->prefix;
-    $this->db->query("RENAME TABLE `{$prefix}k1_resolver` TO `{$prefix}k1_resolver_old`, `{$prefix}k1_resolver_temp` TO `{$prefix}k1_resolver`");
+    $this->db->query("RENAME TABLE `{$prefix}k1_resolver` TO `{$prefix}k1_resolver_old`");
+    $this->db->query("RENAME TABLE `{$prefix}k1_resolver_temp` TO `{$prefix}k1_resolver`");
     $this->db->query("DROP TABLE `{$prefix}k1_resolver_old`");
 
-    update_option("k1_resolver_index_status", [
+    update_option("k1kit_resolver_index_status", [
       "indexing" => false,
       "chunkCount" => 0,
       "chunks" => [],
