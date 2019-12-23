@@ -50,6 +50,7 @@ class Kit {
     // Initialize API routes if request is a REST request
     add_action('rest_api_init', function() use (&$resolver) {
       require 'api/resolver.php';
+      require 'api/transients.php';
       require 'api/transient-list.php';
 
       /**
@@ -91,6 +92,7 @@ class Kit {
         (new Routes\Resolver($resolver))->registerRoutes();
       }
 
+      (new Routes\Transients())->registerRoutes();
       (new Routes\TransientList())->registerRoutes();
     });
 

@@ -60,7 +60,8 @@ export default class Transients extends Component {
       type: 'all',
       role: 'all',
       key: '',
-    }
+    },
+    transientsEnabled: true,
   }
 
   setListHeight = () => {
@@ -80,6 +81,7 @@ export default class Transients extends Component {
     window.addEventListener('resize', this.setListHeight)
 
     const listResponse = await http('/wp-json/k1/v1/transientlist')
+    const { enabled: transientsEnabled } = await http('/wp-json/k1/v1/transients')
 
     if (isError(listResponse)) {
       throw listResponse
@@ -111,12 +113,13 @@ export default class Transients extends Component {
     this.setState({
       list: {
         current: list,
-        full: list, 
+        full: list,
         selected: [],
       },
       prefixes,
-      types, 
+      types,
       roles,
+      transientsEnabled,
     })
   }
 
@@ -157,13 +160,13 @@ export default class Transients extends Component {
         ...this.state.filters,
         [by]: e.target.value,
       }
-    }, this.reorder)  
+    }, this.reorder)
   }
 
   delete = async (transientKey) => {
     const result = await http('/wp-json/k1/v1/transientlist/delete', {
       body: { transientKey },
-      method: 'POST' 
+      method: 'POST'
     })
 
     if (isError(result)) {
@@ -171,7 +174,6 @@ export default class Transients extends Component {
     }
 
     const newList = this.state.list.full.filter(({ key }) => key.original !== transientKey)
-    console.log('deleting, new list', newList)
 
     this.setState({
       list: {
@@ -191,7 +193,6 @@ export default class Transients extends Component {
 
     toBeDeleted.forEach(({ key }) => this.delete(key.original))
     this.clearSelection()
-    console.log({toBeDeleted})
   }
 
   /**
@@ -257,21 +258,46 @@ export default class Transients extends Component {
     })
   }
 
+  toggleTransients = async () => {
+    const active = this.state.transientsEnabled
+
+    try {
+      if (active) {
+        await http('/wp-json/k1/v1/transients/disable', { method: 'post' })
+      } else {
+        await http('/wp-json/k1/v1/transients/enable', { method: 'post' })
+      }
+
+      this.setState({
+        transientsEnabled: !active
+      })
+    } catch (e) {
+      console.error(e)
+    }
+
+  }
+
   renderOption = (x) => (
     <option key={x} value={x}>
       {x}
     </option>
   )
 
+
   render() {
-    const { width, height, list, types, prefixes, roles } = this.state
+    const { width, height, list, types, prefixes, roles, transientsEnabled } = this.state
     const { current: currentList, selected } = list
-    console.log(this.state)
 
     return (
       <div className="transients">
         <div className="info">
           <h2>Transients</h2>
+
+          <label>
+            <input type="checkbox" onChange={this.toggleTransients} checked={!transientsEnabled} />
+
+            <strong>Disable k1\Transientify transients?</strong>
+          </label>
 
           <p>Manage transients within TransientList.</p>
           <p>Only transients created with \k1\Transientify, or managed by \k1\TransientList will show up here.</p>

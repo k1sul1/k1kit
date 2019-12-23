@@ -71,6 +71,11 @@ class Transientify {
 
     $this->bypass = $bypassParamPresentAndCorrect || $bypassPermissionPresent;
     $this->expires = $transientOptions['expires'];
+
+    // Global toggle inside admin, default off
+    if (!get_option('k1kit_transients_enabled', false)) {
+      $this->bypass = true;
+    }
   }
 
   public static function objectCacheExists() {
