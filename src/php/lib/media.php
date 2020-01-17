@@ -49,11 +49,13 @@ function image($image = null, array $data = []) {
   $tag = "<img src='$image[src]' $class alt='$image[alt]'";
 
   if ($data['responsive']) {
-      $tag .= " srcset='$image[srcset]' sizes='$data[sizes]'";
+    $data['sizes'] = empty($data['sizes']) ? getImageSizesAttribute($image) : $data['sizes'];
+
+    $tag .= " srcset='$image[srcset]' sizes='$data[sizes]'";
   }
 
   if ($image['title']) {
-      $tag .= " title='$image[title]'";
+    $tag .= " title='$image[title]'";
   }
 
   $tag .= '>';
@@ -71,6 +73,48 @@ function image($image = null, array $data = []) {
   }
 
   return $tag;
+}
+
+/**
+ * Generate sizes attribute value from srcset
+ */
+function getImageSizesAttribute($getImageDataImage) {
+  $rawSrcSet = $getImageDataImage['srcset'];
+  $sets = explode(', ', $rawSrcSet);
+  $sets = array_filter(array_map(function($set) {
+    if (empty($set)) {
+      return null;
+    }
+
+    [$url, $size] = explode(' ', $set);
+
+    return [
+      'url' => $url,
+      'size' => $size,
+    ];
+  }, $sets));
+  $sizes = '';
+
+  $prevPxSize = null;
+  foreach ($sets as $set) {
+    $url = $set['url'];
+    $size = $set['size'];
+    $pxSize = str_replace('w', 'px', $size);
+
+    if (!$prevPxSize) {
+      $sizes .= "(min-width: $pxSize) $size, \n";
+
+    } else if ($prevPxSize) {
+      $sizes .= "(max-width: $pxSize) and (min-width: $prevPxSize) $size,\n";
+    }
+
+    $prevPxSize = $pxSize;
+  }
+
+  $sizes .= "100vw";
+
+
+  return $sizes;
 }
 
 /**
