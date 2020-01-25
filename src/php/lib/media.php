@@ -49,7 +49,7 @@ function image($image = null, array $data = []) {
   $tag = "<img src='$image[src]' $class alt='$image[alt]'";
 
   if ($data['responsive']) {
-    $data['sizes'] = empty($data['sizes']) ? getImageSizesAttribute($image) : $data['sizes'];
+    $data['sizes'] = empty($data['sizes']) ? getImageSizesAttribute($image['srcset']) : $data['sizes'];
 
     $tag .= " srcset='$image[srcset]' sizes='$data[sizes]'";
   }
@@ -78,8 +78,7 @@ function image($image = null, array $data = []) {
 /**
  * Generate sizes attribute value from srcset
  */
-function getImageSizesAttribute($getImageDataImage) {
-  $rawSrcSet = $getImageDataImage['srcset'];
+function getImageSizesAttribute($rawSrcSet) {
   $sets = explode(', ', $rawSrcSet);
   $sets = array_filter(array_map(function($set) {
     if (empty($set)) {
