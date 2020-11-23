@@ -132,7 +132,7 @@ function content($content = null) {
   $content = \wpautop($content);
   $content = \shortcode_unautop($content);
   $content = \prepend_attachment($content);
-  $content = \wp_make_content_images_responsive($content);
+  $content = \wp_filter_content_tags($content);
 
   return $content;
 }
