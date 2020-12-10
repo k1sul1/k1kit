@@ -11,7 +11,7 @@ class Resolver extends \k1\RestRoute {
       '/url',
       [
         'methods' => 'GET',
-        'callback' => [$this, 'resolveURL']
+        'callback' => [$this, 'resolveURL'],
         'permission_callback' => '__return_true',
       ],
       // [

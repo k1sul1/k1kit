@@ -6,7 +6,7 @@ export default class Main extends Component {
       <div>
         <h2>k1 kit</h2>
 
-        <p>This is the configuration page for k1 kit. There's not much here yet, but look at the tabs.</p>
+        <p>This is the configuration / settings page for k1 kit. Use the tabs above to select what you want to do.</p>
       </div>
     )
   }

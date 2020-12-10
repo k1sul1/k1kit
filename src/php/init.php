@@ -125,17 +125,27 @@ class Kit {
     global $pagenow;
     $whitelist = ['admin.php'];
 
+    // When WordPress is installed into a subdir (Bedrock), home will differ from siteurl.
+    // The difference is the folder WP is installed in.
+    // When working with relative paths (like the asset manifest), this difference will break the enqueues.
+    // Turning relative paths into absolutes should work in all cases.
+    $home = get_option('home');
+    // $siteurl = get_option('siteurl');
+
+
 
     $assets = json_decode(file_get_contents(__DIR__ . '/../gui/build/asset-manifest.json'));
 
-    wp_enqueue_style('k1kit-css', $assets->{'main.css'});
+    // var_dump($assets);
+
+    wp_enqueue_style('k1kit-css', $home . $assets->{'main.css'});
 
     // CSS enqueue is fine, it's just JS that breaks Gutenberg.
     if (!in_array($pagenow, $whitelist)) {
       return false;
     }
 
-    wp_enqueue_script('k1kit-mainjs', $assets->{'main.js'}, [], false, true);
+    wp_enqueue_script('k1kit-mainjs', $home . $assets->{'main.js'}, [], false, true);
     wp_localize_script('k1kit-mainjs', 'k1kit', [
       'nonce' => wp_create_nonce('wp_rest'),
     ]);
