@@ -12,6 +12,7 @@ class Resolver extends \k1\RestRoute {
       [
         'methods' => 'GET',
         'callback' => [$this, 'resolveURL']
+        'permission_callback' => '__return_true',
       ],
       // [
         // 'expires' => \HOUR_IN_SECONDS
@@ -45,7 +46,8 @@ class Resolver extends \k1\RestRoute {
       '/index/continue',
       [
         'methods' => 'POST',
-        'callback' => [$this, 'continueIndexBuild']
+        'callback' => [$this, 'continueIndexBuild'],
+        'permission_callback' => '__return_true',
       ]
     );
   }
