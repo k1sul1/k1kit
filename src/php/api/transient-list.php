@@ -34,6 +34,7 @@ class TransientList extends \k1\RestRoute {
         [
           'methods' => 'GET',
           'callback' => [$this, 'notEnabled'],
+          'permission_callback' => '__return_true',
         ],
         []
       );
