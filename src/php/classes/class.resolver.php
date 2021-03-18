@@ -101,7 +101,7 @@ class Resolver {
       parse_str($parsed["query"], $params);
 
       foreach ($params as $k => $v) {
-        if ($whitelist[$k]) {
+        if (isset($whitelist[$k])) {
           $allowed[$k] = $v;
         }
       }
