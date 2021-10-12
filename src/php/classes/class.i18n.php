@@ -36,7 +36,7 @@ class i18n {
    **/
   public function getText(string $name, string $languageSlug = null) {
     if (!function_exists('pll_translate_string')) {
-      return \__($name);
+      return $this->strings[$name] ?? $name;
     }
 
     return \pll_translate_string($this->strings[$name], $languageSlug ?? $this->getLanguage());
