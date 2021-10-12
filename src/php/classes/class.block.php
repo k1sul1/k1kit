@@ -49,6 +49,7 @@ abstract class Block {
         'align' => true,
         'mode' => true,
         'multiple' => true,
+        'jsx' => true,
       ],
     ];
   }
@@ -75,10 +76,11 @@ abstract class Block {
   }
 
   public function renderPreviewNotice($block, $postId) {
-    $app = \k1\app();
-    echo "<div class='k1-block__preview-notice'><p>";
-    echo $app->i18n->getText('Block: Preview helper');
-    echo "</p></div>";
+    // No longer necessary in recent versions of Gutenberg
+    // $app = \k1\app();
+    // echo "<div class='k1-block__preview-notice'><p>";
+    // echo $app->i18n->getText('Block: Preview helper');
+    // echo "</p></div>";
   }
 
   /**
