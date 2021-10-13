@@ -83,12 +83,6 @@ abstract class Block {
     // echo "</p></div>";
   }
 
-  public function render($fields, $isPreview, $postId) {
-    echo "\n\n\n<!-- Block" . $this->getName() . "is missing the render method -->\n\n\n";
-
-    return null;
-  }
-
   /**
    * Output the block. This is the render_callback of \register_block_type.
    *
