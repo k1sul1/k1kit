@@ -75,7 +75,7 @@ abstract class Block {
     ];
   }
 
-  public function renderPreviewNotice($block, $postId) {
+  public function renderPreviewNotice($fields, $postId) {
     // No longer necessary in recent versions of Gutenberg
     // $app = \k1\app();
     // echo "<div class='k1-block__preview-notice'><p>";
@@ -93,8 +93,11 @@ abstract class Block {
     $fields = \get_fields() ?: []; // Get ALL fields for block
     $transientSettings = !$isPreview ? $this->getTransientSettings($block, $postId) : false;
 
+    // Embed the raw block data in the fields array
+    $fields["__block__"] = $block;
+
     if ($isPreview) {
-      $this->renderPreviewNotice($block, $postId);
+      $this->renderPreviewNotice($fields, $postId);
     }
 
     if (!empty($transientSettings) && \class_exists('\k1\Transientify')) {
