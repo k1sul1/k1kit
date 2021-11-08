@@ -70,7 +70,9 @@ class Kit {
             'get_callback' => '\k1\REST\getCustomFields',
           ]);
 
-          add_filter('acf/format_value', '\k1\REST\changeAcfValue', 10, 3);
+          if (defined('REST_REQUEST')) {
+            add_filter('acf/format_value', '\k1\REST\changeAcfValue', 10, 3);
+          }
         }
 
         if (apply_filters('k1kit/addBlocksToAPI', true)) {

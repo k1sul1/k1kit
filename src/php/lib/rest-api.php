@@ -101,5 +101,6 @@ function changeAcfValue($value, $postId, $field) {
       }
     break;
   }
+
   return $value;
 }
