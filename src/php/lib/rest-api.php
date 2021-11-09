@@ -89,7 +89,13 @@ function changeAcfValue($value, $postId, $field) {
   switch ($field['type']) {
     case 'post_object':
       if (!empty($value)) {
-        $value = $getRestResponseWithId((int) $value);
+        if (is_numeric($value)) {
+          $id = (int) $value;
+        } else {
+          $id = $value->ID;
+        }
+
+        $value = $getRestResponseWithId($id);
       }
     break;
 
