@@ -29,14 +29,22 @@ function getBlockData($post) {
   if ($data) {
     foreach ($data as $i => $block) {
       if (strpos($block['blockName'], 'acf/') === 0) {
-        acf_setup_meta($block['attrs']['data'], $block['attrs']['id'], true);
-        $block['attrs']['data'] = \get_fields();
-        acf_reset_meta($block['attrs']['id']);
+        $bData = $block['attrs']['data'];
+        $id = $block['attrs']['id'];
+
+        if ($bData) {
+          acf_setup_meta($bData, $id, false); // This makes get_fields work
+          $fields = \get_fields($block['attrs']['id']);
+          $block['attrs']['data'] = $fields; // Replacing the mess with nice data
+          //  acf_reset_meta($block['attrs']['id']); // I don't this does anything meaningful
+        }
 
         $data[$i] = $block;
       } else if ($block['blockName'] === 'core/shortcode') {
         $block['innerHTML'] = \do_shortcode($block['innerHTML']);
 
+        $data[$i] = $block;
+      } else {
         $data[$i] = $block;
       }
     }

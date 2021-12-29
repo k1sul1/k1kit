@@ -45,7 +45,7 @@ abstract class Block {
       'render_callback' => [$this, 'print'],
       'mode' => 'preview',
       'align' => 'full',
-      'category' => 'layout',
+      'category' => 'design',
       'supports' => [
         'align' => true,
         'mode' => true,
