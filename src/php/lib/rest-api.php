@@ -29,10 +29,18 @@ function getBlockData($post) {
   if ($data) {
     foreach ($data as $i => $block) {
       if (strpos($block['blockName'], 'acf/') === 0) {
-        $bData = $block['attrs']['data'];
-        $id = $block['attrs']['id'];
+        if (!empty($block['attrs']) && !empty($block['attrs']['data'])) {
+          $bData = $block['attrs']['data'];
+        } else {
+          // I am so fucking fed up with shit BREAKING ALL THE FUCKING TIME!!!
+          // THIS IS WHY I DO NOT WORK WITH WP ANYMORE, EVERY FUCKING VERSION UPGRADE BREAKS SOME CODE
+          $bData = null;
+        }
+
 
         if ($bData) {
+          $id = $block['attrs']['id'];
+
           acf_setup_meta($bData, $id, false); // This makes get_fields work
           $fields = \get_fields($block['attrs']['id']);
           $block['attrs']['data'] = $fields; // Replacing the mess with nice data
