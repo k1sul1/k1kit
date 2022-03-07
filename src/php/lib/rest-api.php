@@ -64,7 +64,7 @@ function getSeoData($post) {
         'description' => $seo->get_description($id),
         'og:description' => $seo->get_open_graph_description($id),
         'og:title' => $seo->get_open_graph_title($id),
-        'og:image' => $seo->get_social_image_url_from_post_thumbnail($id),
+        'og:image' => get_the_post_thumbnail_url($id, 'large'),
       ],
       'canonical' => $seo->create_canonical_url(['id' => $id, 'get_custom_field' => true]),
     ];
