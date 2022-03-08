@@ -81,10 +81,13 @@ function getSeoData($post) {
   return false;
 }
 
+/**
+ * Used in acf/format_value to replace IDs with actual rest api responses.
+ *
+ * Broken in WP 5.9, works in earlier versions.
+ */
 function changeAcfValue($value, $postId, $field) {
   $getRestResponseWithId = function ($id) {
-    // copied from resolver api
-
     $post = get_post($id);
     $type = $post->post_type;
     $id = $post->ID;

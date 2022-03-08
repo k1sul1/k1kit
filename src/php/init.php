@@ -63,20 +63,26 @@ class Kit {
         }
       );
 
-      foreach ($postTypes as $type) {
+      $wp_version = $GLOBALS['wp_version'];
+      $over59 = version_compare($wp_version, 5.9, '>=');
 
+      if (defined('REST_REQUEST') && !$over59) {
+        // This seems to have broken entirely in 5.9. Fuck it, I don't care for now.
+        // It fails in the internal api request part.
+        add_filter('acf/format_value', '\k1\REST\changeAcfValue', 10, 3);
+      }
+
+      foreach ($postTypes as $type) {
         if (apply_filters('k1kit/addAcfToAPI', true)) {
           register_rest_field($type->name, 'acf', [
             'get_callback' => '\k1\REST\getCustomFields',
           ]);
-
-          if (defined('REST_REQUEST')) {
-            add_filter('acf/format_value', '\k1\REST\changeAcfValue', 10, 3);
-          }
         }
 
         if (apply_filters('k1kit/addBlocksToAPI', true)) {
-          register_rest_field($type->name, 'blocks', [
+          $name = $over59 ? 'blockData' : 'blocks';
+
+          register_rest_field($type->name, $name, [
             'get_callback' => '\k1\REST\getBlockData',
           ]);
         }
