@@ -204,8 +204,6 @@ class ViteBuild extends AssetManifest {
       if (!$file) {
         return false;
       }
-
-      return true;
     }
 
     fclose($file);
