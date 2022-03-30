@@ -25,7 +25,7 @@ class AssetManifest {
     return strpos($assetName, '.css') !== false;
   }
 
-  public function enqueueJS(string $filename, $dependencies = [], $useVersion = true, $inFooter = true) {
+  public function enqueueJS(string $filename, $dependencies = [], $inFooter = true) {
     $handle = basename($filename);
     $handle = "{$this->hp}-$handle";
 
@@ -33,8 +33,7 @@ class AssetManifest {
       $handle,
       $filename,
       $dependencies,
-      // Uses the timestamp by default in dev.
-      $useVersion === false ? null : \k1\isDev() ? date('U') : null,
+      null,
       $inFooter
     );
 
@@ -49,7 +48,7 @@ class AssetManifest {
       $handle,
       $filename,
       $dependencies,
-      \k1\isDev() ? date('U') : null
+      null,
     );
 
     return $handle;
@@ -137,8 +136,8 @@ class ViteBuild extends AssetManifest {
       return false;
   }
 
-  public function enqueueJS(string $filename, $dependencies = [], $useVersion = true, $inFooter = true) {
-    $handle = parent::enqueueJS($filename, $dependencies, $useVersion, $inFooter);
+  public function enqueueJS(string $filename, $dependencies = [], $inFooter = true) {
+    $handle = parent::enqueueJS($filename, $dependencies, $inFooter);
 
     add_filter('script_loader_tag', function($tag, $h, $src) use ($handle) {
       if ($handle !== $h) {
@@ -181,7 +180,7 @@ class ViteBuild extends AssetManifest {
 
       return $handles;
     } else if ($isJS) {
-      return $this->enqueueJS($filename, $dependencies, false, true);
+      return $this->enqueueJS($filename, $dependencies, true);
     }
 
     throw new \Exception("Unable to enqueue asset $assetName ($filename) due to type being unsupported");
