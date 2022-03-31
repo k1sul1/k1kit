@@ -18,7 +18,16 @@ class AssetManifest {
   }
 
   public function isJS(string $assetName) {
-    return strpos($assetName, '.js') !== false;
+    $js = strpos($assetName, '.js') !== false;
+    $ts = strpos($assetName, '.js') !== false;
+
+    if (strpos($assetName, '.js') !== false) {
+      return true;
+    } else if (strpos($assetName, '.ts') !== false) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   public function isCSS(string $assetName) {
