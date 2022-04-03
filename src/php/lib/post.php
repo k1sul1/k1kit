@@ -55,7 +55,7 @@ function excerpt($post_id = null, $fallback = true) {
   $excerpt = getExcerpt($post_id, $fallback);
 
   return \k1\tag([
-    "<div class='k1sul1-excerpt'>",
+    "<div class='k1-excerpt'>",
     strpos($excerpt, "<p>") > -1
     ? $excerpt
     : "<p>$excerpt</p>",
@@ -74,7 +74,7 @@ function preview($word_count = 30, $more = "&hellip;", $post_id = null) {
   $preview = getPreview($post_id);
 
   return \k1\tag([
-    "<div class='k1sul1-preview'>",
+    "<div class='k1-preview'>",
     "<p>" . wp_trim_words($preview, $word_count, $more) . "</p>",
     "</div>"
   ]);
