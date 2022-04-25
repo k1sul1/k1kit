@@ -46,7 +46,7 @@ function image($image = null, array $data = []) {
     return false;
   }
 
-  $tag = "<img src='$image[src]' $class alt='$image[alt]'";
+  $tag = "<img src='$image[src]' $class alt='$image[alt]' width='$image[width]' height='$image[height]'";
 
   if ($data['responsive']) {
     $data['sizes'] = empty($data['sizes']) ? getImageSizesAttribute($image['srcset']) : $data['sizes'];
@@ -129,8 +129,13 @@ function getImageData($image = null, string $size = 'medium') {
   }
 
   $x = get_post($id);
+  $data = wp_get_attachment_image_src($id, $size);
   $data = [
-    'src' => wp_get_attachment_image_url($id, $size),
+    // 'src' => wp_get_attachment_image_url($id, $size),
+    'src' => $data[0],
+    'width' => $data[1],
+    'height' => $data[2],
+
     'srcset' => wp_get_attachment_image_srcset($id, $size),
     'description' => \esc_html($x->post_content),
     'title' => \esc_attr($x->post_title),
